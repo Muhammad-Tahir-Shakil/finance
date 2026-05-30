@@ -1,4 +1,4 @@
-# FinTrack — Personal Finance Tracker
+# FinTrack — Personal Finance Tracker v2
 
 A personal-finance tracking app built with **plain HTML, CSS, and vanilla JavaScript**. No build tools, no backend — data is stored in the browser via `localStorage`, and charts use [Chart.js](https://www.chartjs.org/) from a CDN.
 
