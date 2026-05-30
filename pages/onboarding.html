@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Get Started — FinTrack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link rel="stylesheet" href="../css/styles.css"/>
+  <link rel="stylesheet" href="../css/auth.css"/>
+</head>
+<body>
+  <div class="auth-wrap">
+    <div class="wizard">
+      <div class="wizard-progress"><span id="progressBar"></span></div>
+      <p class="wizard-step-count">Step <b id="stepNum">1</b> of 5</p>
+
+      <!-- Step 1: income -->
+      <div class="step active" data-step="1">
+        <h2>What's your monthly income?</h2>
+        <p class="step-hint">We use this as the baseline for your budgets and savings rate.</p>
+        <div class="field">
+          <label for="income">Monthly income</label>
+          <input type="number" id="income" min="0" placeholder="e.g. 4000"/>
+        </div>
+      </div>
+
+      <!-- Step 2: spending categories -->
+      <div class="step" data-step="2">
+        <h2>Where does your money usually go?</h2>
+        <p class="step-hint">Pick your top spending categories. (Select any that apply.)</p>
+        <div class="chip-grid" id="categoryChips">
+          <div class="chip" data-value="Food"><i class="fa-solid fa-utensils"></i> Food &amp; Dining</div>
+          <div class="chip" data-value="Rent"><i class="fa-solid fa-house"></i> Rent / Housing</div>
+          <div class="chip" data-value="Transport"><i class="fa-solid fa-car"></i> Transport</div>
+          <div class="chip" data-value="Shopping"><i class="fa-solid fa-bag-shopping"></i> Shopping</div>
+          <div class="chip" data-value="Bills"><i class="fa-solid fa-file-invoice"></i> Bills &amp; Utilities</div>
+          <div class="chip" data-value="Health"><i class="fa-solid fa-heart-pulse"></i> Health</div>
+          <div class="chip" data-value="Entertainment"><i class="fa-solid fa-film"></i> Entertainment</div>
+          <div class="chip" data-value="Other"><i class="fa-solid fa-ellipsis"></i> Other</div>
+        </div>
+      </div>
+
+      <!-- Step 3: typical monthly spend per category -->
+      <div class="step" data-step="3">
+        <h2>About how much do you spend on each?</h2>
+        <p class="step-hint">Enter your typical monthly amount. This seeds your charts and budgets.</p>
+        <div id="catAmounts"></div>
+        <p class="empty-note" id="catAmountsEmpty" style="display:none;">Go back and pick at least one category to set amounts.</p>
+      </div>
+
+      <!-- Step 4: primary goal -->
+      <div class="step" data-step="4">
+        <h2>What's your main financial goal?</h2>
+        <p class="step-hint">We'll create a savings goal to track your progress.</p>
+        <div class="chip-grid" id="goalChips">
+          <div class="chip" data-value="Emergency Fund"><i class="fa-solid fa-shield-halved"></i> Emergency Fund</div>
+          <div class="chip" data-value="Save for Purchase"><i class="fa-solid fa-cart-shopping"></i> Save for Purchase</div>
+          <div class="chip" data-value="Pay Off Debt"><i class="fa-solid fa-hand-holding-dollar"></i> Pay Off Debt</div>
+          <div class="chip" data-value="Invest &amp; Grow"><i class="fa-solid fa-seedling"></i> Invest &amp; Grow</div>
+        </div>
+        <div class="field" style="margin-top:18px;">
+          <label for="goalTarget">Target amount</label>
+          <input type="number" id="goalTarget" min="0" placeholder="e.g. 10000"/>
+        </div>
+        <div class="field">
+          <label for="goalSaved">Already saved (optional)</label>
+          <input type="number" id="goalSaved" min="0" placeholder="e.g. 2000"/>
+        </div>
+      </div>
+
+      <!-- Step 5: money style -->
+      <div class="step" data-step="5">
+        <h2>Which best describes you?</h2>
+        <p class="step-hint">This personalizes your dashboard tone and tips.</p>
+        <div class="chip-grid" id="styleChips">
+          <div class="chip" data-value="planner"><i class="fa-solid fa-calendar-check"></i> Careful Planner</div>
+          <div class="chip" data-value="saver"><i class="fa-solid fa-vault"></i> Smart Saver</div>
+          <div class="chip" data-value="spender"><i class="fa-solid fa-magnifying-glass-chart"></i> Curious Spender</div>
+          <div class="chip" data-value="chaser"><i class="fa-solid fa-bullseye"></i> Goal Chaser</div>
+        </div>
+      </div>
+
+      <div class="wizard-nav">
+        <button class="ghost-btn" id="backBtn" onclick="prevStep()" disabled>Back</button>
+        <button class="btn-block" id="nextBtn" style="margin-top:0;" onclick="nextStep()">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/storage.js"></script>
+  <script src="../js/onboarding.js"></script>
+</body>
+</html>

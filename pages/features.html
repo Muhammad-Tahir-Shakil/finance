@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Features — FinTrack</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+  <link rel="stylesheet" href="../css/styles.css"/>
+  <link rel="stylesheet" href="../css/landing.css"/>
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <div class="logo" onclick="location.href='../index.html'">
+      <div class="logo-icon"><i class="fa-solid fa-chart-line"></i></div>
+      <div class="logo-text">Fin<span>Track</span></div>
+    </div>
+
+    <div class="right-section">
+      <div class="nav-links">
+        <a href="../index.html">Home</a>
+        <a href="features.html" class="active">Features</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="pricing.html">Pricing</a>
+      </div>
+
+      <div class="buttons">
+        <button class="btn-outline" data-auth="login">Login</button>
+        <button class="btn-gold" data-auth="signup">Sign Up</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <p class="tag">What FinTrack Does</p>
+      <h1>Everything you need to understand your <span>money</span>.</h1>
+      <p>From clear tracking to personalized insights and bank-grade security thinking — explore the capabilities that make managing money feel calm.</p>
+    </div>
+  </section>
+
+  <!-- PILLARS -->
+  <section class="better-way-section" id="better">
+    <div class="better-way-container">
+      <div class="better-way-header">
+        <p class="better-way-tag">The Better Way Forward</p>
+        <h2>A calmer way to understand your <span>money</span>.</h2>
+        <p>FinTrack is built around clarity, confidence, and consistency. Instead of overwhelming you with complicated numbers, it helps you understand your financial life in a way that feels simple, focused, and easy to act on.</p>
+      </div>
+
+      <div class="better-way-grid">
+        <div class="better-card">
+          <span class="better-number">01</span>
+          <div class="better-icon"><i class="fa-solid fa-eye"></i></div>
+          <h3>See Clearly</h3>
+          <p>Understand your money at a glance with KPI cards and charts, so you are never left guessing where your income, spending, and savings stand.</p>
+        </div>
+        <div class="better-card">
+          <span class="better-number">02</span>
+          <div class="better-icon"><i class="fa-solid fa-compass"></i></div>
+          <h3>Plan Confidently</h3>
+          <p>Set budgets per category and compare budget vs. actual, with a clearer view of what is happening now and what needs attention next.</p>
+        </div>
+        <div class="better-card">
+          <span class="better-number">03</span>
+          <div class="better-icon"><i class="fa-solid fa-seedling"></i></div>
+          <h3>Grow Consistently</h3>
+          <p>Track savings goals with visible progress bars and build better money habits over time, connected to the goals that matter most.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MONEY STYLE -->
+  <section class="money-style-section" id="style">
+    <div class="money-style-container">
+      <div class="money-style-header">
+        <p class="money-style-tag">Find Your Money Style</p>
+        <h2>Everyone handles money a little <span>differently</span>.</h2>
+        <p>Some people plan every move. Some save quietly. Some just want to know where everything went. Pick the style that feels most like you — your dashboard adapts its tips to match.</p>
+      </div>
+
+      <div class="money-style-layout">
+        <div class="money-style-grid">
+          <div class="style-card planner active" data-style="planner">
+            <div class="style-label"><span></span>Planning Style</div>
+            <div class="style-icon"><i class="fa-solid fa-calendar-check"></i></div>
+            <h3>The Careful Planner</h3>
+            <p>You like knowing what is coming next and feel better when your money has a clear direction.</p>
+          </div>
+          <div class="style-card saver" data-style="saver">
+            <div class="style-label"><span></span>Saving Style</div>
+            <div class="style-icon"><i class="fa-solid fa-vault"></i></div>
+            <h3>The Smart Saver</h3>
+            <p>You enjoy watching progress build, even when it happens one small step at a time.</p>
+          </div>
+          <div class="style-card spender" data-style="spender">
+            <div class="style-label"><span></span>Discovery Style</div>
+            <div class="style-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+            <h3>The Curious Spender</h3>
+            <p>You want to understand your spending patterns without feeling judged by every purchase.</p>
+          </div>
+          <div class="style-card chaser" data-style="chaser">
+            <div class="style-label"><span></span>Goal Style</div>
+            <div class="style-icon"><i class="fa-solid fa-bullseye"></i></div>
+            <h3>The Goal Chaser</h3>
+            <p>You stay motivated when your progress is visible and every milestone feels within reach.</p>
+          </div>
+        </div>
+
+        <div class="style-result">
+          <div class="result-pill"><i class="fa-solid fa-sparkles"></i> Selected money style</div>
+          <div class="result-orbit"><div class="result-main-icon" id="resultIcon"><i class="fa-solid fa-calendar-check"></i></div></div>
+          <h3 id="resultTitle">The Careful Planner</h3>
+          <p id="resultText">You feel most confident when your financial life is organized before decisions arrive. A clear plan helps you stay calm, prepared, and in control.</p>
+          <div class="result-meter">
+            <div class="meter-top"><span id="meterLabel">Clarity Match</span><span id="meterValue">88%</span></div>
+            <div class="meter-track"><div class="meter-fill" id="meterFill"></div></div>
+          </div>
+          <div class="result-note">
+            <strong id="resultTipTitle">Your ideal focus</strong>
+            <span id="resultTip">Keep your upcoming bills, monthly limits, and savings targets visible so your next move always feels obvious.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECURITY / TRUST -->
+  <section class="trust-section" id="trust">
+    <div class="trust-container">
+      <div class="trust-header">
+        <p class="trust-tag">Built With Confidence</p>
+        <h2>Your money habits deserve a tool that feels <span>secure</span>.</h2>
+        <p>FinTrack is designed to make financial tracking feel calm, private, and reliable. It gives you the confidence to understand your money without feeling exposed or overwhelmed.</p>
+      </div>
+
+      <div class="trust-layout">
+        <div class="trust-visual">
+          <img src="../assets/Trust-snapshot.jpeg" alt="Secure financial planning workspace">
+          <div class="security-card">
+            <div class="security-card-top">
+              <div class="security-lock"><i class="fa-solid fa-lock"></i></div>
+              <div>
+                <h3>Protected Financial Clarity</h3>
+                <p>Security-focused design for everyday money awareness.</p>
+              </div>
+            </div>
+            <div class="security-lines">
+              <div class="security-line"><span></span></div>
+              <div class="security-line"><span></span></div>
+              <div class="security-line"><span></span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="trust-content-panel">
+          <div class="trust-grid">
+            <div class="trust-item">
+              <div class="trust-icon"><i class="fa-solid fa-shield-halved"></i></div>
+              <h3>Secure by Design</h3>
+              <p>Built around careful handling of sensitive financial activity, so tracking money feels safe from the start.</p>
+            </div>
+            <div class="trust-item">
+              <div class="trust-icon"><i class="fa-solid fa-user-lock"></i></div>
+              <h3>Privacy First</h3>
+              <p>Your financial habits stay personal and protected — your data lives only in your own browser.</p>
+            </div>
+            <div class="trust-item">
+              <div class="trust-icon"><i class="fa-solid fa-fingerprint"></i></div>
+              <h3>Controlled Access</h3>
+              <p>A focused experience that keeps personal finance data organized, intentional, and easy to review.</p>
+            </div>
+            <div class="trust-item">
+              <div class="trust-icon"><i class="fa-solid fa-heart-circle-check"></i></div>
+              <h3>Built for Habits</h3>
+              <p>Designed to support everyday awareness, better decisions, and steady financial confidence.</p>
+            </div>
+          </div>
+
+          <div class="trust-metrics">
+            <div class="trust-metric"><h4><span class="trust-count" data-target="99">0</span>%</h4><p>Focused on reliable tracking</p></div>
+            <div class="trust-metric"><h4><span class="trust-count" data-target="24">0</span>/7</h4><p>Always ready for review</p></div>
+            <div class="trust-metric"><h4><span class="trust-count" data-target="100">0</span>%</h4><p>Built around clarity</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-band">
+    <div class="cta-inner">
+      <h2>See these features in <span>action</span>.</h2>
+      <p>Sign up free and your dashboard fills with live charts based on a few quick questions.</p>
+      <div class="hero-buttons">
+        <button class="start-btn" data-cta>Get Started Free</button>
+        <button class="learn-btn" onclick="location.href='pricing.html'">View Pricing</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <div class="logo" style="margin-bottom:18px;">
+          <div class="logo-icon"><i class="fa-solid fa-chart-line"></i></div>
+          <div class="logo-text">Fin<span>Track</span></div>
+        </div>
+        <p>Clarity before control. Track your money, build better habits, and watch your progress grow — all in one secure place.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="features.html">Features</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="dashboard.html">Dashboard</a>
+      </div>
+      <div class="footer-col">
+        <h4>Account</h4>
+        <a href="login.html">Login</a>
+        <a href="signup.html">Sign Up</a>
+      </div>
+      <div class="footer-col">
+        <h4>Get in touch</h4>
+        <p>support@fintrack.demo<br/>A personal finance tracking demo project.</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 FinTrack. A personal finance tracking demo.</span>
+      <div class="socials">
+        <span><i class="fa-brands fa-x-twitter"></i></span>
+        <span><i class="fa-brands fa-github"></i></span>
+        <span><i class="fa-brands fa-linkedin"></i></span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/storage.js"></script>
+  <script src="../js/nav.js"></script>
+  <script src="../js/landing.js"></script>
+</body>
+</html>

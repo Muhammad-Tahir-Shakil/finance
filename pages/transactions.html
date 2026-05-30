@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Transactions — FinTrack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link rel="stylesheet" href="../css/styles.css"/>
+  <link rel="stylesheet" href="../css/dashboard.css"/>
+</head>
+<body>
+  <div class="app">
+
+    <aside class="sidebar">
+      <div class="logo" onclick="location.href='../index.html'">
+        <div class="logo-icon"><i class="fa-solid fa-chart-line"></i></div>
+        <div class="logo-text">Fin<span>Track</span></div>
+      </div>
+      <nav class="side-nav">
+        <a href="dashboard.html"><i class="fa-solid fa-gauge-high"></i> Overview</a>
+        <a href="transactions.html" class="active"><i class="fa-solid fa-list"></i> Transactions</a>
+        <a href="goals.html"><i class="fa-solid fa-bullseye"></i> Goals</a>
+        <a href="budgets.html"><i class="fa-solid fa-wallet"></i> Budgets</a>
+        <div class="side-soon-label">Coming soon</div>
+        <a href="#" onclick="comingSoon('Subscriptions'); return false;"><i class="fa-solid fa-rotate"></i> Subscriptions <span class="soon-badge">Soon</span></a>
+        <a href="#" onclick="comingSoon('Reports'); return false;"><i class="fa-solid fa-file-lines"></i> Reports <span class="soon-badge">Soon</span></a>
+        <a href="#" onclick="comingSoon('Net worth tracking'); return false;"><i class="fa-solid fa-chart-pie"></i> Net Worth <span class="soon-badge">Soon</span></a>
+      </nav>
+      <button class="side-logout" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out</button>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="greeting">
+          <h1>Transactions</h1>
+          <p>Record income and expenses to keep every chart up to date.</p>
+        </div>
+        <button class="btn-gold" onclick="exportCSV()"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
+      </div>
+
+      <!-- KPIs -->
+      <section class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-top"><span class="kpi-label">Total Income</span><span class="kpi-icon" style="background:rgba(0,230,118,0.1);color:#00E676;"><i class="fa-solid fa-arrow-down"></i></span></div>
+          <div class="kpi-value" id="kpiIncome">$0</div>
+          <div class="kpi-sub">All time</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><span class="kpi-label">Total Expenses</span><span class="kpi-icon" style="background:rgba(255,82,82,0.1);color:#FF5252;"><i class="fa-solid fa-arrow-up"></i></span></div>
+          <div class="kpi-value" id="kpiExpenses">$0</div>
+          <div class="kpi-sub">All time</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><span class="kpi-label">Balance</span><span class="kpi-icon" style="background:rgba(212,175,55,0.12);color:#D4AF37;"><i class="fa-solid fa-sack-dollar"></i></span></div>
+          <div class="kpi-value" id="kpiBalance">$0</div>
+          <div class="kpi-sub">Income − Expenses</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><span class="kpi-label">Entries</span><span class="kpi-icon" style="background:rgba(110,168,254,0.12);color:#6EA8FE;"><i class="fa-solid fa-receipt"></i></span></div>
+          <div class="kpi-value" id="kpiCount">0</div>
+          <div class="kpi-sub">Total recorded</div>
+        </div>
+      </section>
+
+      <!-- ADD + LIST -->
+      <section class="panel">
+        <h3>Add a transaction</h3>
+        <p class="panel-sub">Choose a type, enter a category and amount.</p>
+
+        <form class="form-row" onsubmit="addTransaction(event)">
+          <select id="addType">
+            <option value="expense">Expense</option>
+            <option value="income">Income</option>
+          </select>
+          <input type="text" id="addCategory" placeholder="Category (e.g. Food)"/>
+          <input type="number" id="addAmount" placeholder="Amount" min="0" step="0.01"/>
+          <input type="date" id="addDate"/>
+          <input type="text" id="addNote" placeholder="Note (optional)"/>
+          <button type="submit"><i class="fa-solid fa-plus"></i> Add</button>
+        </form>
+
+        <div class="filters">
+          <button class="filter-pill active" data-filter="all" onclick="setFilter(this)">All</button>
+          <button class="filter-pill" data-filter="income" onclick="setFilter(this)">Income</button>
+          <button class="filter-pill" data-filter="expense" onclick="setFilter(this)">Expense</button>
+        </div>
+
+        <div class="tx-list" id="txList"></div>
+        <p class="empty-note" id="txEmpty" style="display:none;">No transactions to show.</p>
+      </section>
+    </main>
+  </div>
+
+  <script src="../js/storage.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/transactions.js"></script>
+</body>
+</html>
