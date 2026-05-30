@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Budgets — FinTrack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link rel="stylesheet" href="../css/styles.css"/>
+  <link rel="stylesheet" href="../css/dashboard.css"/>
+</head>
+<body>
+  <div class="app">
+
+    <aside class="sidebar">
+      <div class="logo" onclick="location.href='../index.html'">
+        <div class="logo-icon"><i class="fa-solid fa-chart-line"></i></div>
+        <div class="logo-text">Fin<span>Track</span></div>
+      </div>
+      <nav class="side-nav">
+        <a href="dashboard.html"><i class="fa-solid fa-gauge-high"></i> Overview</a>
+        <a href="transactions.html"><i class="fa-solid fa-list"></i> Transactions</a>
+        <a href="goals.html"><i class="fa-solid fa-bullseye"></i> Goals</a>
+        <a href="budgets.html" class="active"><i class="fa-solid fa-wallet"></i> Budgets</a>
+        <div class="side-soon-label">Coming soon</div>
+        <a href="#" onclick="comingSoon('Subscriptions'); return false;"><i class="fa-solid fa-rotate"></i> Subscriptions <span class="soon-badge">Soon</span></a>
+        <a href="#" onclick="comingSoon('Reports'); return false;"><i class="fa-solid fa-file-lines"></i> Reports <span class="soon-badge">Soon</span></a>
+        <a href="#" onclick="comingSoon('Net worth tracking'); return false;"><i class="fa-solid fa-chart-pie"></i> Net Worth <span class="soon-badge">Soon</span></a>
+      </nav>
+      <button class="side-logout" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out</button>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="greeting">
+          <h1>Budgets</h1>
+          <p>Set a monthly limit per category and track it against your spending.</p>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <section class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-top"><span class="kpi-label">Total Budget</span><span class="kpi-icon" style="background:rgba(212,175,55,0.12);color:#D4AF37;"><i class="fa-solid fa-wallet"></i></span></div>
+          <div class="kpi-value" id="kpiBudget">$0</div>
+          <div class="kpi-sub">Monthly limit</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><span class="kpi-label">Spent</span><span class="kpi-icon" style="background:rgba(255,82,82,0.1);color:#FF5252;"><i class="fa-solid fa-arrow-up"></i></span></div>
+          <div class="kpi-value" id="kpiSpent">$0</div>
+          <div class="kpi-sub">This month</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><span class="kpi-label">Remaining</span><span class="kpi-icon" style="background:rgba(0,230,118,0.1);color:#00E676;"><i class="fa-solid fa-piggy-bank"></i></span></div>
+          <div class="kpi-value" id="kpiRemaining">$0</div>
+          <div class="kpi-sub">Left to spend</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><span class="kpi-label">Categories</span><span class="kpi-icon" style="background:rgba(110,168,254,0.12);color:#6EA8FE;"><i class="fa-solid fa-layer-group"></i></span></div>
+          <div class="kpi-value" id="kpiCats">0</div>
+          <div class="kpi-sub">With a budget</div>
+        </div>
+      </section>
+
+      <!-- SET BUDGET -->
+      <section class="panel">
+        <h3>Set a budget</h3>
+        <p class="panel-sub">Pick a category and a monthly limit. Re-adding a category updates it.</p>
+        <form class="form-row" onsubmit="setBudget(event)">
+          <select id="budgetCat">
+            <option value="Food">Food</option>
+            <option value="Rent">Rent</option>
+            <option value="Transport">Transport</option>
+            <option value="Shopping">Shopping</option>
+            <option value="Bills">Bills</option>
+            <option value="Health">Health</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Other">Other</option>
+          </select>
+          <input type="number" id="budgetLimit" placeholder="Monthly limit" min="0"/>
+          <button type="submit"><i class="fa-solid fa-check"></i> Save Budget</button>
+        </form>
+      </section>
+
+      <!-- CHART + ROWS -->
+      <section class="chart-grid">
+        <div class="panel">
+          <h3>Budget vs Actual</h3>
+          <p class="panel-sub">This month</p>
+          <div class="chart-box"><canvas id="budgetChart"></canvas></div>
+          <p class="empty-note" id="chartEmpty" style="display:none;">Set a budget to see the comparison.</p>
+        </div>
+        <div class="panel">
+          <h3>Category limits</h3>
+          <p class="panel-sub">Spent vs limit this month</p>
+          <div id="budgetRows"></div>
+          <p class="empty-note" id="rowsEmpty" style="display:none;">No budgets set yet.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/budgets.js"></script>
+</body>
+</html>

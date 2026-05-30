@@ -1,0 +1,114 @@
+/* transactions.js — Transactions page: add / filter / delete + KPIs */
+
+requireAuth();
+
+let activeFilter = 'all';
+
+function addTransaction(e) {
+  e.preventDefault();
+  const type = document.getElementById('addType').value;
+  const category = document.getElementById('addCategory').value.trim() || (type === 'income' ? 'Income' : 'Other');
+  const amount = Number(document.getElementById('addAmount').value);
+  const dateInput = document.getElementById('addDate').value;
+  const note = document.getElementById('addNote').value.trim();
+  if (!amount || amount <= 0) return;
+
+  const data = getData();
+  data.transactions.unshift({
+    id: uid(),
+    type,
+    amount,
+    category,
+    date: dateInput || new Date().toISOString().slice(0, 10),
+    note,
+  });
+  saveData(data);
+  e.target.reset();
+  render();
+}
+
+function deleteTransaction(id) {
+  const data = getData();
+  data.transactions = data.transactions.filter((t) => t.id !== id);
+  saveData(data);
+  render();
+}
+
+function setFilter(btn) {
+  activeFilter = btn.dataset.filter;
+  document.querySelectorAll('.filter-pill').forEach((p) => p.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function renderKPIs(data) {
+  const income = data.transactions.filter((t) => t.type === 'income').reduce((s, t) => s + Number(t.amount), 0);
+  const expense = data.transactions.filter((t) => t.type === 'expense').reduce((s, t) => s + Number(t.amount), 0);
+  document.getElementById('kpiIncome').textContent = money(income);
+  document.getElementById('kpiExpenses').textContent = money(expense);
+  document.getElementById('kpiBalance').textContent = money(income - expense);
+  document.getElementById('kpiCount').textContent = data.transactions.length;
+}
+
+function renderList(data) {
+  const list = document.getElementById('txList');
+  const empty = document.getElementById('txEmpty');
+  list.innerHTML = '';
+
+  const items = data.transactions.filter((t) => activeFilter === 'all' || t.type === activeFilter);
+  if (!items.length) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  items.forEach((t) => {
+    const isIncome = t.type === 'income';
+    const color = isIncome ? '#00E676' : '#FF5252';
+    const bg = isIncome ? 'rgba(0,230,118,0.1)' : 'rgba(255,82,82,0.1)';
+    const sign = isIncome ? '+' : '-';
+    const row = document.createElement('div');
+    row.className = 'tx-item';
+    row.innerHTML = `
+      <div class="tx-left">
+        <div class="tx-badge" style="background:${bg};color:${color};"><i class="fa-solid ${catIcon(t.category)}"></i></div>
+        <div class="tx-meta"><div class="n">${t.category}${t.note ? ' · ' + t.note : ''}</div><div class="d">${t.date}</div></div>
+      </div>
+      <div class="tx-right">
+        <span class="tx-amount" style="color:${color};">${sign}${money(t.amount)}</span>
+        <button class="tx-del" title="Delete" onclick="deleteTransaction('${t.id}')"><i class="fa-solid fa-trash"></i></button>
+      </div>`;
+    list.appendChild(row);
+  });
+}
+
+function exportCSV() {
+  const data = getData();
+  if (!data.transactions.length) {
+    showToast('No transactions to export yet.', 'fa-circle-info');
+    return;
+  }
+
+  const header = ['Date', 'Type', 'Category', 'Amount', 'Note'];
+  const escape = (v) => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`;
+  const rows = data.transactions.map((t) => [t.date, t.type, t.category, t.amount, t.note || '']);
+  const csv = [header, ...rows].map((r) => r.map(escape).join(',')).join('\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `fintrack-transactions-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  showToast('Transactions exported to CSV.', 'fa-circle-check');
+}
+
+function render() {
+  const data = getData();
+  renderKPIs(data);
+  renderList(data);
+}
+
+/* default the date picker to today, then render */
+document.getElementById('addDate').value = new Date().toISOString().slice(0, 10);
+render();
