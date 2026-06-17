@@ -518,5 +518,208 @@
   .trust-grid, .trust-metrics { grid-template-columns: 1fr; }
   .trust-visual { min-height: 520px; }
   .security-card { left: 18px; right: 18px; bottom: 18px; padding: 22px; }
-  .trust-item { min-height: auto; padding: 26px 22px; }
+.trust-item { min-height: auto; padding: 26px 22px; }
+}
+
+@media (max-width: 900px) {
+  .hero {
+    padding: 56px 28px;
+  }
+
+  .hero-content h1,
+  .page-hero h1,
+  .problem-content h2,
+  .better-way-header h2,
+  .money-style-header h2,
+  .trust-header h2 {
+    overflow-wrap: anywhere;
+  }
+
+  .hero-stats {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .stat-card {
+    min-width: 0;
+  }
+
+  .page-hero,
+  .pricing-section,
+  .faq-section,
+  .cta-band,
+  .problem-section,
+  .better-way-section,
+  .money-style-section,
+  .trust-section {
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+
+  .trust-visual {
+    min-height: 460px;
+  }
+}
+
+@media (max-width: 650px) {
+  .nav-links,
+  .buttons {
+    display: flex;
+  }
+
+  .buttons {
+    display: grid;
+  }
+
+  .hero {
+    min-height: auto;
+    padding: 46px 20px 64px;
+    gap: 28px;
+  }
+
+  .hero-tag,
+  .page-hero .tag,
+  .problem-tag,
+  .better-way-tag,
+  .money-style-tag,
+  .trust-tag {
+    font-size: 11px;
+    letter-spacing: 1.4px;
+  }
+
+  .hero-content h1 {
+    font-size: 34px;
+  }
+
+  .hero-description {
+    font-size: 15px;
+    margin-bottom: 30px;
+  }
+
+  .hero-buttons {
+    width: 100%;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 34px;
+  }
+
+  .hero-buttons .start-btn,
+  .hero-buttons .learn-btn {
+    width: 100%;
+  }
+
+  .hero-stats {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .stat-card {
+    width: 100%;
+  }
+
+  .dashboard-mockup {
+    border-radius: 20px;
+  }
+
+  .widget-box {
+    padding: 18px;
+  }
+
+  .page-hero,
+  .pricing-section,
+  .faq-section,
+  .cta-band,
+  .problem-section,
+  .better-way-section,
+  .money-style-section,
+  .trust-section {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .page-hero p,
+  .better-way-header p,
+  .money-style-header p,
+  .trust-header p,
+  .problem-content p,
+  .cta-inner p {
+    font-size: 15px;
+  }
+
+  .cta-inner {
+    border-radius: 20px;
+  }
+
+  .price-card,
+  .better-card,
+  .style-card,
+  .style-result,
+  .trust-item,
+  .security-card {
+    border-radius: 18px;
+  }
+
+  .trust-visual {
+    min-height: 420px;
+    border-radius: 20px;
+  }
+
+  .security-card-top {
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 420px) {
+  .hero {
+    padding-inline: 16px;
+  }
+
+  .hero-content h1,
+  .page-hero h1,
+  .problem-content h2,
+  .better-way-header h2,
+  .money-style-header h2,
+  .trust-header h2 {
+    font-size: 30px;
+  }
+
+  .start-btn,
+  .learn-btn {
+    padding: 14px 20px;
+  }
+
+  .page-hero,
+  .pricing-section,
+  .faq-section,
+  .cta-band,
+  .problem-section,
+  .better-way-section,
+  .money-style-section,
+  .trust-section {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .problem-card,
+  .price-card,
+  .better-card,
+  .style-card,
+  .style-result,
+  .trust-item {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .trust-visual {
+    min-height: 380px;
+  }
+
+  .security-card {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    padding: 18px;
+  }
 }

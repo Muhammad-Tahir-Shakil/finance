@@ -170,9 +170,174 @@
 }
 @media (max-width: 820px) {
   .app { grid-template-columns: 1fr; }
-  .sidebar { position: static; height: auto; flex-direction: row; align-items: center; gap: 16px; overflow-x: auto; }
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: auto;
+    z-index: 1000;
+    padding: 16px 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    overflow: hidden;
+  }
   .sidebar .logo { margin-bottom: 0; }
-  .side-nav { flex-direction: row; }
-  .side-logout { width: auto; }
+  .side-nav {
+    width: 100%;
+    flex-direction: row;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: thin;
+  }
+  .side-nav a {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    padding: 10px 12px;
+  }
+  .side-soon-label {
+    display: none;
+  }
+  .side-nav a .soon-badge {
+    display: none;
+  }
+  .side-logout {
+    width: 100%;
+    justify-content: center;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
   .main { padding: 24px 20px 50px; }
+}
+
+@media (max-width: 640px) {
+  .main {
+    padding: 22px 16px 42px;
+  }
+
+  .topbar {
+    align-items: stretch;
+  }
+
+  .topbar .greeting,
+  .topbar .btn-gold {
+    width: 100%;
+  }
+
+  .topbar h1 {
+    font-size: 25px;
+    line-height: 1.2;
+  }
+
+  .kpi-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .kpi-card,
+  .panel,
+  .goal-card {
+    border-radius: 14px;
+    padding: 18px;
+  }
+
+  .kpi-value {
+    font-size: 24px;
+    overflow-wrap: anywhere;
+  }
+
+  .chart-box {
+    height: 240px;
+  }
+
+  .chart-box.small {
+    height: 220px;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .form-row select,
+  .form-row input,
+  .form-row button {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .tx-item,
+  .goal-card .gc-top {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .tx-item {
+    flex-direction: column;
+  }
+
+  .tx-left,
+  .tx-right {
+    width: 100%;
+  }
+
+  .tx-right {
+    justify-content: space-between;
+  }
+
+  .goal-card .gc-top,
+  .goal-card .gc-actions {
+    flex-direction: column;
+  }
+
+  .goal-card .gc-actions input,
+  .goal-card .gc-actions button {
+    width: 100%;
+  }
+
+  .budget-row {
+    grid-template-columns: 1fr;
+  }
+
+  .budget-row .b-figures {
+    text-align: left;
+  }
+
+  .budget-row .b-del {
+    grid-column: 1;
+    justify-self: start;
+  }
+}
+
+@media (max-width: 420px) {
+  .sidebar {
+    padding: 14px 16px;
+  }
+
+  .sidebar .logo-text {
+    font-size: 21px;
+  }
+
+  .side-nav a {
+    font-size: 13px;
+  }
+
+  .main {
+    padding-inline: 12px;
+  }
+
+  .panel,
+  .kpi-card,
+  .goal-card {
+    padding: 16px;
+  }
+
+  .filters {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .filter-pill {
+    width: 100%;
+    text-align: center;
+  }
 }

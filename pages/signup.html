@@ -30,12 +30,23 @@
           <label for="email">Email</label>
           <input type="email" id="email" placeholder="you@example.com" autocomplete="email"/>
         </div>
+
+
         <div class="field">
-          <label for="password">Password</label>
-          <input type="password" id="password" placeholder="At least 4 characters" autocomplete="new-password"/>
-        </div>
+  <label for="password">Password</label>
+  <div class="password-field">
+    <input type="password" id="password" placeholder="At least 4 characters" autocomplete="new-password"/>
+    <button type="button" class="password-toggle" id="togglePassword" aria-label="Toggle password visibility">
+      <i class="fa-solid fa-eye"></i>
+    </button>
+  </div>
+</div>
+
+
         <p class="form-error" id="formError"></p>
         <button type="submit" class="btn-block">Create Account</button>
+
+
       </form>
 
       <p class="auth-foot">Already have an account? <a href="login.html">Log in</a></p>

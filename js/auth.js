@@ -56,3 +56,36 @@ function logout() {
   clearSession();
   window.location.href = '../index.html';
 }
+
+
+
+// Toggle Password Visibility Logic
+document.addEventListener("DOMContentLoaded", function () {
+    const toggleBtn = document.getElementById("togglePassword");
+    const passwordInput = document.getElementById("password");
+
+    if (toggleBtn && passwordInput) {
+        toggleBtn.addEventListener("click", function () {
+            // Check current input status
+            const isPassword = passwordInput.getAttribute("type") === "password";
+            
+            // Switch the type
+            passwordInput.setAttribute("type", isPassword ? "text" : "password");
+            
+            // Toggle your style state attribute
+            toggleBtn.setAttribute("aria-pressed", isPassword ? "true" : "false");
+            
+            // Swap out the Font Awesome icon look
+            const icon = toggleBtn.querySelector("i");
+            if (icon) {
+                if (isPassword) {
+                    icon.classList.remove("fa-eye");
+                    icon.classList.add("fa-eye-slash");
+                } else {
+                    icon.classList.remove("fa-eye-slash");
+                    icon.classList.add("fa-eye");
+                }
+            }
+        });
+    }
+});
