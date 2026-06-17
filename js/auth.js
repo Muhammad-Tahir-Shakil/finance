@@ -29,9 +29,7 @@ function handleSignup(e) {
   users.push(user);
   saveUsers(users);
   setSession(user.id);
-
-  // New users go straight to the onboarding wizard.
-  window.location.href = 'onboarding.html';
+  showTransition('Setting up your account...', 'onboarding.html');
 }
 
 function handleLogin(e) {
@@ -49,10 +47,11 @@ function handleLogin(e) {
 
   setSession(user.id);
   const data = getData();
-  window.location.href = data.profile.onboarded ? 'dashboard.html' : 'onboarding.html';
+  const dest = data.profile.onboarded ? 'dashboard.html' : 'onboarding.html';
+  showTransition('Welcome back...', dest);
 }
 
 function logout() {
   clearSession();
-  window.location.href = '../index.html';
+  showTransition('Signing out...', '../index.html');
 }

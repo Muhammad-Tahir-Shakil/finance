@@ -27,7 +27,16 @@ function renderAppNav(activePage) {
     <button class="side-logout" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out</button>`;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function initAppNav() {
   const el = document.getElementById('appSidebar');
-  if (el) renderAppNav(el.dataset.page || '');
-});
+  if (!el || el.dataset.navInit === '1') return;
+  el.dataset.navInit = '1';
+  renderAppNav(el.dataset.page || '');
+  if (typeof bindTransitionLinks === 'function') {
+    bindTransitionLinks('.side-nav a, .sidebar .logo');
+  }
+}
+
+// Scripts load at end of body — sidebar exists; render immediately (not only on DOMContentLoaded)
+initAppNav();
+document.addEventListener('DOMContentLoaded', initAppNav);

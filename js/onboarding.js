@@ -188,7 +188,7 @@ function finish() {
   }
 
   saveData(data);
-  window.location.href = 'dashboard.html';
+  showTransition('Launching your dashboard...', 'dashboard.html');
 }
 
 showStep(1);

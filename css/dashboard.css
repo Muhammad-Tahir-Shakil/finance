@@ -29,8 +29,6 @@
 .side-nav a i { width: 18px; text-align: center; }
 .side-nav a:hover { background: rgba(255,255,255,0.04); color: #fff; }
 .side-nav a.active { background: rgba(212,175,55,0.12); color: var(--gold); }
-.side-soon-label { color: #5a6b85; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; padding: 18px 14px 6px; }
-.side-nav a .soon-badge { margin-left: auto; }
 
 .side-logout {
   display: flex; align-items: center; gap: 10px;
