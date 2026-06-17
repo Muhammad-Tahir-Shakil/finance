@@ -1,51 +1,191 @@
-/* goals.js — Goals page: create goal, add funds, delete */
+/* goals.js — Savings goals: categories, filters, edit, fund history */
 
 requireAuth();
 
+let activeFilter = 'all';
+let activeCategory = 'all';
+let selectedGoalCategory = 'emergency';
+let editingGoalId = null;
+
+function selectGoalCategory(chip) {
+  document.querySelectorAll('#goalCategoryChips .chip').forEach((c) => c.classList.remove('selected'));
+  chip.classList.add('selected');
+  selectedGoalCategory = chip.dataset.value;
+}
+
+document.querySelectorAll('#goalCategoryChips .chip').forEach((chip) => {
+  chip.addEventListener('click', () => selectGoalCategory(chip));
+});
+
+function resetGoalForm() {
+  editingGoalId = null;
+  document.getElementById('goalFormTitle').textContent = 'Create a goal';
+  document.getElementById('goalSubmitBtn').innerHTML = '<i class="fa-solid fa-plus"></i> Add Goal';
+  document.getElementById('goalCancelBtn').style.display = 'none';
+  document.getElementById('goalForm').reset();
+  document.querySelectorAll('#goalCategoryChips .chip').forEach((c) => c.classList.remove('selected'));
+  const first = document.querySelector('#goalCategoryChips .chip[data-value="emergency"]');
+  if (first) selectGoalCategory(first);
+}
+
 function addGoal(e) {
   e.preventDefault();
-  const name = document.getElementById('goalName').value.trim();
+  const customName = document.getElementById('goalName').value.trim();
+  const meta = goalMeta(selectedGoalCategory);
+  const name = customName || (selectedGoalCategory === 'custom' ? '' : meta.label);
   const target = Number(document.getElementById('goalTarget').value);
   const saved = Number(document.getElementById('goalSaved').value) || 0;
   const deadline = document.getElementById('goalDeadline').value;
-  if (!name || !target || target <= 0) return;
+  const priority = document.getElementById('goalPriority').value;
+  const monthlyContribution = Number(document.getElementById('goalMonthly').value) || 0;
+  const note = document.getElementById('goalNote').value.trim();
+
+  if (!name || !target || target <= 0) {
+    showToast(selectedGoalCategory === 'custom' && !customName ? 'Enter a name for your custom goal.' : 'Enter a target amount.', 'fa-circle-exclamation');
+    return;
+  }
 
   const data = getData();
-  data.goals.push({ id: uid(), name, target, saved, deadline });
+  const goalPayload = {
+    name,
+    category: selectedGoalCategory,
+    target,
+    saved,
+    deadline,
+    priority,
+    monthlyContribution,
+    note,
+    completed: saved >= target,
+    history: saved > 0 ? [{ id: uid(), date: localDateStr(), amount: saved, type: 'deposit', note: 'Initial balance' }] : [],
+  };
+
+  if (editingGoalId) {
+    const existing = data.goals.find((g) => g.id === editingGoalId);
+    if (existing) {
+      Object.assign(existing, normalizeGoal({ ...existing, ...goalPayload, id: existing.id, history: existing.history }));
+    }
+    showToast('Goal updated.', 'fa-circle-check');
+  } else {
+    data.goals.push(normalizeGoal({ id: uid(), ...goalPayload }));
+    showToast('Goal created.', 'fa-circle-check');
+  }
+
   saveData(data);
-  e.target.reset();
+  resetGoalForm();
   render();
 }
 
-function addFunds(id) {
-  const input = document.getElementById('add_' + id);
+function editGoal(id) {
+  const data = getData();
+  const g = data.goals.find((x) => x.id === id);
+  if (!g) return;
+
+  editingGoalId = id;
+  document.getElementById('goalFormTitle').textContent = 'Edit goal';
+  document.getElementById('goalSubmitBtn').innerHTML = '<i class="fa-solid fa-check"></i> Save Changes';
+  document.getElementById('goalCancelBtn').style.display = 'inline-flex';
+  document.getElementById('goalName').value = g.category === 'custom' ? g.name : g.name;
+  document.getElementById('goalTarget').value = g.target;
+  document.getElementById('goalSaved').value = g.saved;
+  document.getElementById('goalDeadline').value = g.deadline || '';
+  document.getElementById('goalPriority').value = g.priority || 'medium';
+  document.getElementById('goalMonthly').value = g.monthlyContribution || '';
+  document.getElementById('goalNote').value = g.note || '';
+
+  document.querySelectorAll('#goalCategoryChips .chip').forEach((c) => {
+    c.classList.toggle('selected', c.dataset.value === g.category);
+  });
+  selectedGoalCategory = g.category;
+  document.getElementById('goalForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function adjustFunds(id, type) {
+  const input = document.getElementById(`${type}_${id}`);
   const amount = Number(input.value);
   if (!amount || amount <= 0) return;
 
   const data = getData();
   const goal = data.goals.find((g) => g.id === id);
-  if (goal) {
-    goal.saved = Number(goal.saved) + amount;
-    saveData(data);
-    render();
+  if (!goal) return;
+
+  if (type === 'withdraw' && amount > Number(goal.saved)) {
+    showToast('Cannot withdraw more than saved amount.', 'fa-circle-exclamation');
+    return;
   }
+
+  goal.saved = type === 'deposit'
+    ? Number(goal.saved) + amount
+    : Math.max(0, Number(goal.saved) - amount);
+  goal.completed = goal.saved >= goal.target && goal.target > 0;
+  if (!Array.isArray(goal.history)) goal.history = [];
+  goal.history.unshift({ id: uid(), date: localDateStr(), amount, type, note: '' });
+
+  saveData(data);
+  input.value = '';
+  render();
+}
+
+function toggleComplete(id) {
+  const data = getData();
+  const goal = data.goals.find((g) => g.id === id);
+  if (!goal) return;
+  goal.completed = !goal.completed;
+  saveData(data);
+  render();
 }
 
 function deleteGoal(id) {
   const data = getData();
   data.goals = data.goals.filter((g) => g.id !== id);
   saveData(data);
+  if (editingGoalId === id) resetGoalForm();
   render();
 }
 
+function setFilter(btn, kind) {
+  if (kind === 'status') {
+    activeFilter = btn.dataset.filter;
+    document.querySelectorAll('#statusFilters .filter-pill').forEach((p) => p.classList.remove('active'));
+  } else {
+    activeCategory = btn.dataset.cat;
+    document.querySelectorAll('#categoryFilters .filter-pill').forEach((p) => p.classList.remove('active'));
+  }
+  btn.classList.add('active');
+  renderCards(getData());
+}
+
+function filteredGoals(goals) {
+  return goals.filter((g) => {
+    const statusOk =
+      activeFilter === 'all' ||
+      (activeFilter === 'active' && !g.completed) ||
+      (activeFilter === 'completed' && g.completed);
+    const catOk = activeCategory === 'all' || g.category === activeCategory;
+    return statusOk && catOk;
+  });
+}
+
 function renderKPIs(data) {
+  const active = data.goals.filter((g) => !g.completed);
   const saved = data.goals.reduce((s, g) => s + Number(g.saved), 0);
-  const target = data.goals.reduce((s, g) => s + Number(g.target), 0);
-  const pct = target > 0 ? Math.min(100, Math.round((saved / target) * 100)) : 0;
+  const target = active.reduce((s, g) => s + Number(g.target), 0);
+  const pct = target > 0 ? Math.min(100, Math.round((active.reduce((s, g) => s + Number(g.saved), 0) / target) * 100)) : 0;
+  const monthly = active.reduce((s, g) => s + Number(g.monthlyContribution), 0);
+
   document.getElementById('kpiSaved').textContent = money(saved);
   document.getElementById('kpiTarget').textContent = money(target);
   document.getElementById('kpiProgress').textContent = pct + '%';
-  document.getElementById('kpiGoals').textContent = data.goals.length;
+  document.getElementById('kpiGoals').textContent = active.length;
+  document.getElementById('kpiMonthly').textContent = money(monthly);
+}
+
+function deadlineLabel(g) {
+  if (g.completed) return 'Goal reached';
+  const days = daysUntil(g.deadline);
+  if (days == null) return 'No deadline';
+  if (days < 0) return `${Math.abs(days)} days overdue`;
+  if (days === 0) return 'Due today';
+  return `${days} days left`;
 }
 
 function renderCards(data) {
@@ -53,27 +193,54 @@ function renderCards(data) {
   const empty = document.getElementById('goalsEmpty');
   wrap.innerHTML = '';
 
-  if (!data.goals.length) { empty.style.display = 'block'; return; }
+  const items = filteredGoals(data.goals);
+  if (!items.length) {
+    empty.style.display = 'block';
+    empty.textContent = data.goals.length
+      ? 'No goals match your filters.'
+      : 'No goals yet. Create one above.';
+    return;
+  }
   empty.style.display = 'none';
 
-  data.goals.forEach((g) => {
-    const pct = g.target > 0 ? Math.min(100, Math.round((g.saved / g.target) * 100)) : 0;
-    const done = pct >= 100;
+  items.forEach((g) => {
+    const meta = goalMeta(g.category);
+    const pct = goalProgress(g);
+    const done = g.completed || pct >= 100;
+    const days = daysUntil(g.deadline);
+    const overdue = days != null && days < 0 && !done;
+
     const card = document.createElement('div');
-    card.className = 'goal-card';
+    card.className = `goal-card goal-card-${g.priority}${done ? ' goal-card-done' : ''}${overdue ? ' goal-card-overdue' : ''}`;
     card.innerHTML = `
       <div class="gc-top">
-        <div>
-          <div class="gc-name">${g.name}</div>
-          <div class="gc-sub">${done ? 'Goal reached! 🎉' : (g.deadline ? 'Target by ' + g.deadline : 'No deadline set')}</div>
+        <div class="gc-icon" style="background:${meta.color}22;color:${meta.color};"><i class="fa-solid ${meta.icon}"></i></div>
+        <div class="gc-head">
+          <div class="gc-name">${escapeHtml(g.name)}</div>
+          <div class="gc-tags">
+            <span class="goal-tag">${escapeHtml(meta.label)}</span>
+            <span class="goal-tag priority-${g.priority}">${g.priority} priority</span>
+            ${done ? '<span class="goal-tag done-tag">Completed</span>' : ''}
+          </div>
         </div>
-        <button class="icon-del" title="Delete goal" onclick="deleteGoal('${g.id}')"><i class="fa-solid fa-trash"></i></button>
+        <div class="gc-tools">
+          <button class="icon-btn" title="Edit" onclick="editGoal('${g.id}')"><i class="fa-solid fa-pen"></i></button>
+          <button class="icon-btn" title="${done ? 'Mark active' : 'Mark complete'}" onclick="toggleComplete('${g.id}')"><i class="fa-solid ${done ? 'fa-rotate-left' : 'fa-check'}"></i></button>
+          <button class="icon-del" title="Delete" onclick="deleteGoal('${g.id}')"><i class="fa-solid fa-trash"></i></button>
+        </div>
       </div>
       <div class="gc-amt">${money(g.saved)} <span>/ ${money(g.target)} · ${pct}%</span></div>
-      <div class="g-bar"><div class="g-fill" style="width:${pct}%;${done ? 'background:linear-gradient(90deg,#00C853,#00E676);' : ''}"></div></div>
+      <div class="g-bar"><div class="g-fill" style="width:${pct}%;${done ? 'background:linear-gradient(90deg,#00C853,#00E676);' : `background:linear-gradient(90deg,${meta.color},${meta.color}99);`}"></div></div>
+      <div class="gc-meta">
+        <span><i class="fa-regular fa-calendar"></i> ${deadlineLabel(g)}</span>
+        ${g.monthlyContribution ? `<span><i class="fa-solid fa-repeat"></i> ${money(g.monthlyContribution)}/mo</span>` : ''}
+      </div>
+      ${g.note ? `<p class="gc-note">${escapeHtml(g.note)}</p>` : ''}
       <div class="gc-actions">
-        <input type="number" id="add_${g.id}" placeholder="Add funds" min="0"/>
-        <button class="gc-add" onclick="addFunds('${g.id}')">Add</button>
+        <input type="number" id="deposit_${g.id}" placeholder="Deposit" min="0"/>
+        <button class="gc-add" onclick="adjustFunds('${g.id}','deposit')"><i class="fa-solid fa-plus"></i> Add</button>
+        <input type="number" id="withdraw_${g.id}" placeholder="Withdraw" min="0"/>
+        <button class="gc-withdraw" onclick="adjustFunds('${g.id}','withdraw')"><i class="fa-solid fa-minus"></i></button>
       </div>`;
     wrap.appendChild(card);
   });
@@ -85,4 +252,5 @@ function render() {
   renderCards(data);
 }
 
+resetGoalForm();
 render();

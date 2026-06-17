@@ -15,50 +15,54 @@ const TICK = '#9FB3C8';
 
 let trendChart, categoryChart, budgetChart;
 
-function sumBy(transactions, type, mKey) {
-  return transactions
-    .filter((t) => t.type === type && (!mKey || t.date.startsWith(mKey)))
-    .reduce((s, t) => s + Number(t.amount), 0);
-}
-
 /* ---------- KPIs ---------- */
 function renderKPIs(data) {
   const tx = data.transactions;
   const m = monthKey();
-  const balance = sumBy(tx, 'income') - sumBy(tx, 'expense');
-  const monthIncome = sumBy(tx, 'income', m);
-  const monthExpense = sumBy(tx, 'expense', m);
+  const balance = sumByType(tx, 'income') - sumByType(tx, 'expense');
+  const monthIncome = sumByType(tx, 'income', m);
+  const monthExpense = sumByType(tx, 'expense', m);
   const savingsRate = monthIncome > 0 ? Math.round(((monthIncome - monthExpense) / monthIncome) * 100) : 0;
 
   document.getElementById('kpiBalance').textContent = money(balance);
   document.getElementById('kpiIncome').textContent = money(monthIncome);
   document.getElementById('kpiExpenses').textContent = money(monthExpense);
   document.getElementById('kpiSavings').textContent = savingsRate + '%';
+
+  const subs = (data.subscriptions || []).filter((s) => s.active).reduce((s, sub) => s + monthlySubCost(sub), 0);
+  const net = totalNetWorth(data.netWorth || { assets: [], liabilities: [] });
+  document.getElementById('kpiSubs').textContent = money(subs);
+  document.getElementById('kpiNetWorth').textContent = money(net);
+  document.getElementById('kpiReportRate').textContent = savingsRate + '%';
 }
 
 /* ---------- income vs expenses (6 months) ---------- */
 function renderTrend(data) {
-  const labels = [], income = [], expense = [];
-  const now = new Date();
-  for (let i = 5; i >= 0; i--) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    const key = d.toISOString().slice(0, 7);
-    labels.push(d.toLocaleString('en-US', { month: 'short' }));
-    income.push(sumBy(data.transactions, 'income', key));
-    expense.push(sumBy(data.transactions, 'expense', key));
-  }
+  const months = monthlyTotals(data.transactions, 6);
+  const labels = months.map((m) => m.label);
+  const income = months.map((m) => m.income);
+  const expense = months.map((m) => m.expense);
+  const peak = Math.max(...income, ...expense, 0);
 
   if (trendChart) trendChart.destroy();
   trendChart = new Chart(document.getElementById('trendChart'), {
     type: 'line',
     data: { labels, datasets: [
-      { label: 'Income', data: income, borderColor: '#00E676', backgroundColor: 'rgba(0,230,118,0.12)', fill: true, tension: 0.35, borderWidth: 2, pointRadius: 3 },
-      { label: 'Expenses', data: expense, borderColor: '#FF6B6B', backgroundColor: 'rgba(255,107,107,0.1)', fill: true, tension: 0.35, borderWidth: 2, pointRadius: 3 },
+      { label: 'Income', data: income, borderColor: '#00E676', backgroundColor: 'rgba(0,230,118,0.12)', fill: true, tension: 0.35, borderWidth: 2, pointRadius: 4, pointHoverRadius: 6 },
+      { label: 'Expenses', data: expense, borderColor: '#FF6B6B', backgroundColor: 'rgba(255,107,107,0.1)', fill: true, tension: 0.35, borderWidth: 2, pointRadius: 4, pointHoverRadius: 6 },
     ] },
     options: {
       responsive: true, maintainAspectRatio: false,
       plugins: { legend: { labels: { color: TICK, usePointStyle: true, boxWidth: 8 } } },
-      scales: { x: { grid: { color: GRID }, ticks: { color: TICK } }, y: { grid: { color: GRID }, ticks: { color: TICK, callback: (v) => '$' + v } } },
+      scales: {
+        x: { grid: { color: GRID }, ticks: { color: TICK } },
+        y: {
+          beginAtZero: true,
+          suggestedMax: peak > 0 ? Math.ceil(peak * 1.15) : undefined,
+          grid: { color: GRID },
+          ticks: { color: TICK, callback: (v) => '$' + Number(v).toLocaleString('en-US') },
+        },
+      },
     },
   });
 }
@@ -67,7 +71,7 @@ function renderTrend(data) {
 function renderCategory(data) {
   const m = monthKey();
   const totals = {};
-  data.transactions.filter((t) => t.type === 'expense' && t.date.startsWith(m))
+  data.transactions.filter((t) => t.type === 'expense' && txMonthKey(t.date) === m)
     .forEach((t) => { totals[t.category] = (totals[t.category] || 0) + Number(t.amount); });
 
   const labels = Object.keys(totals), values = Object.values(totals);
@@ -99,7 +103,7 @@ function renderBudget(data) {
 
   const limits = cats.map((c) => data.budgets[c]);
   const actuals = cats.map((c) => data.transactions
-    .filter((t) => t.type === 'expense' && t.category === c && t.date.startsWith(m))
+    .filter((t) => t.type === 'expense' && t.category === c && txMonthKey(t.date) === m)
     .reduce((s, t) => s + Number(t.amount), 0));
 
   budgetChart = new Chart(canvas, {
@@ -122,15 +126,26 @@ function renderGoals(data) {
     wrap.innerHTML = '<p class="empty-note">No goals yet. Add one on the Goals page.</p>';
     return;
   }
-  data.goals.forEach((g) => {
-    const pct = g.target > 0 ? Math.min(100, Math.round((g.saved / g.target) * 100)) : 0;
+  data.goals.slice(0, 4).forEach((g) => {
+    const meta = goalMeta(g.category);
+    const pct = goalProgress(g);
     const block = document.createElement('div');
     block.className = 'goal-block';
     block.innerHTML = `
-      <div class="g-top"><span>${g.name}</span><span>${money(g.saved)} / ${money(g.target)} · ${pct}%</span></div>
-      <div class="g-bar"><div class="g-fill" style="width:${pct}%;"></div></div>`;
+      <div class="g-top">
+        <span><i class="fa-solid ${meta.icon}" style="color:${meta.color};margin-right:6px;"></i>${escapeHtml(g.name)}</span>
+        <span>${money(g.saved)} / ${money(g.target)} · ${pct}%</span>
+      </div>
+      <div class="g-bar"><div class="g-fill" style="width:${pct}%;background:linear-gradient(90deg,${meta.color},${meta.color}99);"></div></div>`;
     wrap.appendChild(block);
   });
+  if (data.goals.length > 4) {
+    const more = document.createElement('p');
+    more.className = 'panel-sub';
+    more.style.marginTop = '12px';
+    more.innerHTML = `<a href="goals.html" class="filter-pill">+${data.goals.length - 4} more goals</a>`;
+    wrap.appendChild(more);
+  }
 }
 
 /* ---------- recent transactions (read-only) ---------- */

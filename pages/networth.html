@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Net Worth — FinTrack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link rel="stylesheet" href="../css/styles.css"/>
+  <link rel="stylesheet" href="../css/dashboard.css"/>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="appSidebar" data-page="networth"></aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="greeting">
+          <h1>Net Worth</h1>
+          <p>Track what you own, what you owe, and how your wealth changes over time.</p>
+        </div>
+      </div>
+
+      <section class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-top"><span class="kpi-label">Total Assets</span><span class="kpi-icon" style="background:rgba(0,230,118,0.1);color:#00E676;"><i class="fa-solid fa-arrow-trend-up"></i></span></div>
+          <div class="kpi-value" id="kpiAssets">$0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><span class="kpi-label">Total Liabilities</span><span class="kpi-icon" style="background:rgba(255,82,82,0.1);color:#FF5252;"><i class="fa-solid fa-arrow-trend-down"></i></span></div>
+          <div class="kpi-value" id="kpiLiabilities">$0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><span class="kpi-label">Net Worth</span><span class="kpi-icon" style="background:rgba(212,175,55,0.12);color:#D4AF37;"><i class="fa-solid fa-scale-balanced"></i></span></div>
+          <div class="kpi-value" id="kpiNet">$0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><span class="kpi-label">Items Tracked</span><span class="kpi-icon" style="background:rgba(110,168,254,0.12);color:#6EA8FE;"><i class="fa-solid fa-layer-group"></i></span></div>
+          <div class="kpi-value" id="kpiItems">0</div>
+        </div>
+      </section>
+
+      <section class="lower-grid">
+        <div class="panel">
+          <h3>Add asset</h3>
+          <p class="panel-sub">Cash, investments, property, vehicles, and more.</p>
+          <form class="form-row" onsubmit="addAsset(event)">
+            <input type="text" id="assetName" placeholder="Asset name" required/>
+            <select id="assetType">
+              <option value="cash">Cash & Savings</option>
+              <option value="investment">Investments</option>
+              <option value="property">Property</option>
+              <option value="vehicle">Vehicle</option>
+              <option value="other">Other</option>
+            </select>
+            <input type="number" id="assetValue" placeholder="Current value" min="0" required/>
+            <button type="submit"><i class="fa-solid fa-plus"></i> Add Asset</button>
+          </form>
+        </div>
+        <div class="panel">
+          <h3>Add liability</h3>
+          <p class="panel-sub">Mortgages, loans, credit cards, and other debts.</p>
+          <form class="form-row" onsubmit="addLiability(event)">
+            <input type="text" id="liabilityName" placeholder="Liability name" required/>
+            <select id="liabilityType">
+              <option value="mortgage">Mortgage</option>
+              <option value="loan">Personal Loan</option>
+              <option value="credit">Credit Card</option>
+              <option value="other">Other</option>
+            </select>
+            <input type="number" id="liabilityValue" placeholder="Amount owed" min="0" required/>
+            <button type="submit"><i class="fa-solid fa-plus"></i> Add Liability</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="chart-grid">
+        <div class="panel">
+          <h3>Assets vs liabilities</h3>
+          <p class="panel-sub">Current snapshot</p>
+          <div class="chart-box"><canvas id="nwChart"></canvas></div>
+          <p class="empty-note" id="chartEmpty" style="display:none;">Add assets or liabilities to see your net worth.</p>
+        </div>
+        <div class="panel" id="trendWrap" style="display:none;">
+          <h3>Net worth over time</h3>
+          <p class="panel-sub">Daily snapshots as you update</p>
+          <div class="chart-box"><canvas id="nwTrend"></canvas></div>
+        </div>
+      </section>
+
+      <section class="lower-grid">
+        <div class="panel">
+          <h3>Assets</h3>
+          <div id="assetList"></div>
+          <p class="empty-note" id="assetEmpty" style="display:none;">No assets added yet.</p>
+        </div>
+        <div class="panel">
+          <h3>Liabilities</h3>
+          <div id="liabilityList"></div>
+          <p class="empty-note" id="liabilityEmpty" style="display:none;">No liabilities added yet.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="../js/storage.js?v=5"></script>
+  <script src="../js/ui.js?v=5"></script>
+  <script src="../js/auth.js?v=5"></script>
+  <script src="../js/app-nav.js?v=5"></script>
+  <script src="../js/networth.js?v=5"></script>
+</body>
+</html>

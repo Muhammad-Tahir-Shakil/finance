@@ -13,23 +13,7 @@
 <body>
   <div class="app">
 
-    <aside class="sidebar">
-      <div class="logo" onclick="location.href='../index.html'">
-        <div class="logo-icon"><i class="fa-solid fa-chart-line"></i></div>
-        <div class="logo-text">Fin<span>Track</span></div>
-      </div>
-      <nav class="side-nav">
-        <a href="dashboard.html"><i class="fa-solid fa-gauge-high"></i> Overview</a>
-        <a href="transactions.html"><i class="fa-solid fa-list"></i> Transactions</a>
-        <a href="goals.html"><i class="fa-solid fa-bullseye"></i> Goals</a>
-        <a href="budgets.html" class="active"><i class="fa-solid fa-wallet"></i> Budgets</a>
-        <div class="side-soon-label">Coming soon</div>
-        <a href="#" onclick="comingSoon('Subscriptions'); return false;"><i class="fa-solid fa-rotate"></i> Subscriptions <span class="soon-badge">Soon</span></a>
-        <a href="#" onclick="comingSoon('Reports'); return false;"><i class="fa-solid fa-file-lines"></i> Reports <span class="soon-badge">Soon</span></a>
-        <a href="#" onclick="comingSoon('Net worth tracking'); return false;"><i class="fa-solid fa-chart-pie"></i> Net Worth <span class="soon-badge">Soon</span></a>
-      </nav>
-      <button class="side-logout" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out</button>
-    </aside>
+    <aside class="sidebar" id="appSidebar" data-page="budgets"></aside>
 
     <main class="main">
       <div class="topbar">
@@ -102,9 +86,10 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <script src="../js/storage.js"></script>
-  <script src="../js/ui.js"></script>
-  <script src="../js/auth.js"></script>
-  <script src="../js/budgets.js"></script>
+  <script src="../js/storage.js?v=5"></script>
+  <script src="../js/ui.js?v=5"></script>
+  <script src="../js/auth.js?v=5"></script>
+  <script src="../js/app-nav.js?v=5"></script>
+  <script src="../js/budgets.js?v=5"></script>
 </body>
 </html>

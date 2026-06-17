@@ -13,23 +13,7 @@
 <body>
   <div class="app">
 
-    <aside class="sidebar">
-      <div class="logo" onclick="location.href='../index.html'">
-        <div class="logo-icon"><i class="fa-solid fa-chart-line"></i></div>
-        <div class="logo-text">Fin<span>Track</span></div>
-      </div>
-      <nav class="side-nav">
-        <a href="dashboard.html" class="active"><i class="fa-solid fa-gauge-high"></i> Overview</a>
-        <a href="transactions.html"><i class="fa-solid fa-list"></i> Transactions</a>
-        <a href="goals.html"><i class="fa-solid fa-bullseye"></i> Goals</a>
-        <a href="budgets.html"><i class="fa-solid fa-wallet"></i> Budgets</a>
-        <div class="side-soon-label">Coming soon</div>
-        <a href="#" onclick="comingSoon('Subscriptions'); return false;"><i class="fa-solid fa-rotate"></i> Subscriptions <span class="soon-badge">Soon</span></a>
-        <a href="#" onclick="comingSoon('Reports'); return false;"><i class="fa-solid fa-file-lines"></i> Reports <span class="soon-badge">Soon</span></a>
-        <a href="#" onclick="comingSoon('Net worth tracking'); return false;"><i class="fa-solid fa-chart-pie"></i> Net Worth <span class="soon-badge">Soon</span></a>
-      </nav>
-      <button class="side-logout" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out</button>
-    </aside>
+    <aside class="sidebar" id="appSidebar" data-page="dashboard"></aside>
 
     <main class="main">
       <div class="topbar">
@@ -98,6 +82,25 @@
         </div>
       </section>
 
+      <!-- QUICK INSIGHTS -->
+      <section class="kpi-grid kpi-grid-3 dash-insights">
+        <div class="kpi-card insight-card" onclick="location.href='subscriptions.html'">
+          <div class="kpi-top"><span class="kpi-label">Subscriptions</span><span class="kpi-icon" style="background:rgba(157,123,255,0.12);color:#9D7BFF;"><i class="fa-solid fa-rotate"></i></span></div>
+          <div class="kpi-value" id="kpiSubs">$0</div>
+          <div class="kpi-sub">Monthly recurring</div>
+        </div>
+        <div class="kpi-card insight-card" onclick="location.href='networth.html'">
+          <div class="kpi-top"><span class="kpi-label">Net Worth</span><span class="kpi-icon" style="background:rgba(212,175,55,0.12);color:#D4AF37;"><i class="fa-solid fa-scale-balanced"></i></span></div>
+          <div class="kpi-value" id="kpiNetWorth">$0</div>
+          <div class="kpi-sub">Assets − liabilities</div>
+        </div>
+        <div class="kpi-card insight-card" onclick="location.href='reports.html'">
+          <div class="kpi-top"><span class="kpi-label">Reports</span><span class="kpi-icon" style="background:rgba(110,168,254,0.12);color:#6EA8FE;"><i class="fa-solid fa-file-lines"></i></span></div>
+          <div class="kpi-value" id="kpiReportRate">0%</div>
+          <div class="kpi-sub">This month's savings rate</div>
+        </div>
+      </section>
+
       <!-- RECENT TRANSACTIONS (read-only) -->
       <section class="panel">
         <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -111,9 +114,10 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <script src="../js/storage.js"></script>
-  <script src="../js/ui.js"></script>
-  <script src="../js/auth.js"></script>
-  <script src="../js/dashboard.js"></script>
+  <script src="../js/storage.js?v=5"></script>
+  <script src="../js/ui.js?v=5"></script>
+  <script src="../js/auth.js?v=5"></script>
+  <script src="../js/app-nav.js?v=5"></script>
+  <script src="../js/dashboard.js?v=5"></script>
 </body>
 </html>

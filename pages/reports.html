@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reports — FinTrack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link rel="stylesheet" href="../css/styles.css"/>
+  <link rel="stylesheet" href="../css/dashboard.css"/>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="appSidebar" data-page="reports"></aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="greeting">
+          <h1>Reports</h1>
+          <p>Monthly insights, savings trends, and exportable summaries.</p>
+        </div>
+        <button class="btn-gold" onclick="exportReport()"><i class="fa-solid fa-download"></i> Export CSV</button>
+      </div>
+
+      <section class="kpi-grid kpi-grid-5">
+        <div class="kpi-card">
+          <div class="kpi-top"><span class="kpi-label">This Month Income</span><span class="kpi-icon" style="background:rgba(0,230,118,0.1);color:#00E676;"><i class="fa-solid fa-arrow-down"></i></span></div>
+          <div class="kpi-value" id="kpiIncome">$0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><span class="kpi-label">This Month Expenses</span><span class="kpi-icon" style="background:rgba(255,82,82,0.1);color:#FF5252;"><i class="fa-solid fa-arrow-up"></i></span></div>
+          <div class="kpi-value" id="kpiExpense">$0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><span class="kpi-label">Net Savings</span><span class="kpi-icon" style="background:rgba(212,175,55,0.12);color:#D4AF37;"><i class="fa-solid fa-piggy-bank"></i></span></div>
+          <div class="kpi-value" id="kpiSavings">$0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><span class="kpi-label">Savings Rate</span><span class="kpi-icon" style="background:rgba(110,168,254,0.12);color:#6EA8FE;"><i class="fa-solid fa-percent"></i></span></div>
+          <div class="kpi-value" id="kpiRate">0%</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><span class="kpi-label">Subscriptions</span><span class="kpi-icon" style="background:rgba(157,123,255,0.12);color:#9D7BFF;"><i class="fa-solid fa-rotate"></i></span></div>
+          <div class="kpi-value" id="kpiSubs">$0</div>
+          <div class="kpi-sub">Monthly recurring</div>
+        </div>
+      </section>
+
+      <div class="filters" id="rangeFilters">
+        <button class="filter-pill" data-months="3" onclick="setReportRange(this)">3 months</button>
+        <button class="filter-pill active" data-months="6" onclick="setReportRange(this)">6 months</button>
+        <button class="filter-pill" data-months="12" onclick="setReportRange(this)">12 months</button>
+      </div>
+
+      <section class="chart-grid">
+        <div class="panel">
+          <h3>Income vs Expenses</h3>
+          <p class="panel-sub">Monthly comparison</p>
+          <div class="chart-box"><canvas id="incomeChart"></canvas></div>
+        </div>
+        <div class="panel">
+          <h3>Spending by category</h3>
+          <p class="panel-sub">This month</p>
+          <div class="chart-box small"><canvas id="categoryChart"></canvas></div>
+          <p class="empty-note" id="catEmpty" style="display:none;">No expenses recorded this month.</p>
+        </div>
+      </section>
+
+      <section class="lower-grid">
+        <div class="panel">
+          <h3>Savings rate trend</h3>
+          <p class="panel-sub">Percentage of income saved each month</p>
+          <div class="chart-box small"><canvas id="savingsChart"></canvas></div>
+        </div>
+        <div class="panel">
+          <h3>Financial summary</h3>
+          <p class="panel-sub">Key metrics for the selected period</p>
+          <div class="report-summary" id="reportSummary"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="../js/storage.js?v=5"></script>
+  <script src="../js/ui.js?v=5"></script>
+  <script src="../js/auth.js?v=5"></script>
+  <script src="../js/app-nav.js?v=5"></script>
+  <script src="../js/reports.js?v=5"></script>
+</body>
+</html>

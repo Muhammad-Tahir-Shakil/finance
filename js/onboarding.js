@@ -20,6 +20,34 @@ const answers = {
   moneyStyle: '',
 };
 
+/* --- Inject an error display element dynamically if it doesn't exist --- */
+function showError(message) {
+  let errorEl = document.getElementById('wizardError');
+  if (!errorEl) {
+    errorEl = document.createElement('div');
+    errorEl.id = 'wizardError';
+    errorEl.className = 'form-error'; // Uses your existing .form-error CSS style
+    errorEl.style.color = 'var(--red)';
+    errorEl.style.fontSize = '14px';
+    errorEl.style.marginBottom = '14px';
+    errorEl.style.textAlign = 'center';
+    errorEl.style.fontWeight = '500';
+    
+    // Insert it right above the navigation buttons
+    const nav = document.querySelector('.wizard-nav');
+    nav.parentNode.insertBefore(errorEl, nav);
+  }
+  errorEl.textContent = message;
+  errorEl.style.display = 'block';
+}
+
+function clearError() {
+  const errorEl = document.getElementById('wizardError');
+  if (errorEl) {
+    errorEl.style.display = 'none';
+    errorEl.textContent = '';
+  }
+}
 /* --- multi-select chips (categories) --- */
 document.querySelectorAll('#categoryChips .chip').forEach((chip) => {
   chip.addEventListener('click', () => chip.classList.toggle('selected'));
@@ -144,7 +172,19 @@ function finish() {
 
   // Savings goal from the answers.
   if (answers.goalType && answers.goalTarget > 0) {
-    data.goals.push({ id: uid(), name: answers.goalType, target: answers.goalTarget, saved: answers.goalSaved, deadline: '' });
+    const cat = inferGoalCategory(answers.goalType);
+    data.goals.push(normalizeGoal({
+      id: uid(),
+      name: answers.goalType,
+      category: cat,
+      target: answers.goalTarget,
+      saved: answers.goalSaved,
+      deadline: '',
+      priority: 'high',
+      monthlyContribution: 0,
+      note: 'Created during onboarding',
+      history: answers.goalSaved > 0 ? [{ id: uid(), date: new Date().toISOString().slice(0, 10), amount: answers.goalSaved, type: 'deposit', note: 'Initial balance' }] : [],
+    }));
   }
 
   saveData(data);

@@ -9,7 +9,7 @@ let budgetChart;
 function spentFor(data, cat) {
   const m = monthKey();
   return data.transactions
-    .filter((t) => t.type === 'expense' && t.category === cat && t.date.startsWith(m))
+    .filter((t) => t.type === 'expense' && t.category === cat && txMonthKey(t.date) === m)
     .reduce((s, t) => s + Number(t.amount), 0);
 }
 
