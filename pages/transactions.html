@@ -13,23 +13,7 @@
 <body>
   <div class="app">
 
-    <aside class="sidebar">
-      <div class="logo" onclick="location.href='../index.html'">
-        <div class="logo-icon"><i class="fa-solid fa-chart-line"></i></div>
-        <div class="logo-text">Fin<span>Track</span></div>
-      </div>
-      <nav class="side-nav">
-        <a href="dashboard.html"><i class="fa-solid fa-gauge-high"></i> Overview</a>
-        <a href="transactions.html" class="active"><i class="fa-solid fa-list"></i> Transactions</a>
-        <a href="goals.html"><i class="fa-solid fa-bullseye"></i> Goals</a>
-        <a href="budgets.html"><i class="fa-solid fa-wallet"></i> Budgets</a>
-        <div class="side-soon-label">Coming soon</div>
-        <a href="#" onclick="comingSoon('Subscriptions'); return false;"><i class="fa-solid fa-rotate"></i> Subscriptions <span class="soon-badge">Soon</span></a>
-        <a href="#" onclick="comingSoon('Reports'); return false;"><i class="fa-solid fa-file-lines"></i> Reports <span class="soon-badge">Soon</span></a>
-        <a href="#" onclick="comingSoon('Net worth tracking'); return false;"><i class="fa-solid fa-chart-pie"></i> Net Worth <span class="soon-badge">Soon</span></a>
-      </nav>
-      <button class="side-logout" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out</button>
-    </aside>
+    <aside class="sidebar" id="appSidebar" data-page="transactions"></aside>
 
     <main class="main">
       <div class="topbar">
@@ -70,11 +54,11 @@
         <p class="panel-sub">Choose a type, enter a category and amount.</p>
 
         <form class="form-row" onsubmit="addTransaction(event)">
-          <select id="addType">
+          <select id="addType" onchange="syncCategoryOptions()">
             <option value="expense">Expense</option>
             <option value="income">Income</option>
           </select>
-          <input type="text" id="addCategory" placeholder="Category (e.g. Food)"/>
+          <select id="addCategory"></select>
           <input type="number" id="addAmount" placeholder="Amount" min="0" step="0.01"/>
           <input type="date" id="addDate"/>
           <input type="text" id="addNote" placeholder="Note (optional)"/>
@@ -93,9 +77,11 @@
     </main>
   </div>
 
-  <script src="../js/storage.js"></script>
-  <script src="../js/ui.js"></script>
-  <script src="../js/auth.js"></script>
-  <script src="../js/transactions.js"></script>
+  <script src="../js/storage.js?v=8"></script>
+  <script src="../js/ui.js?v=10"></script>
+  <script src="../js/loader.js?v=7"></script>
+  <script src="../js/auth.js?v=7"></script>
+  <script src="../js/app-nav.js?v=7"></script>
+  <script src="../js/transactions.js?v=8"></script>
 </body>
 </html>

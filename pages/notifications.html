@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Notifications — FinTrack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link rel="stylesheet" href="../css/styles.css"/>
+  <link rel="stylesheet" href="../css/dashboard.css?v=13"/>
+</head>
+<body>
+  <div class="app">
+
+    <aside class="sidebar" id="appSidebar" data-page="notifications"></aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="greeting">
+          <h1>Notifications</h1>
+          <p>Review alerts, mark them read, and jump to the page where you can take action.</p>
+        </div>
+      </div>
+
+      <section class="kpi-grid kpi-grid-3">
+        <div class="kpi-card">
+          <div class="kpi-top"><span class="kpi-label">Unread</span><span class="kpi-icon" style="background:rgba(255,82,82,0.1);color:#FF5252;"><i class="fa-solid fa-bell"></i></span></div>
+          <div class="kpi-value" id="inboxUnread">0</div>
+          <div class="kpi-sub">Need attention</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><span class="kpi-label">Total alerts</span><span class="kpi-icon" style="background:rgba(212,175,55,0.12);color:#D4AF37;"><i class="fa-solid fa-inbox"></i></span></div>
+          <div class="kpi-value" id="inboxTotal">0</div>
+          <div class="kpi-sub">Active this month</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><span class="kpi-label">Reviewed</span><span class="kpi-icon" style="background:rgba(110,168,254,0.12);color:#6EA8FE;"><i class="fa-solid fa-circle-check"></i></span></div>
+          <div class="kpi-value" id="inboxReviewed">0</div>
+          <div class="kpi-sub">Marked as read</div>
+        </div>
+      </section>
+
+      <section class="panel inbox-panel">
+        <div class="inbox-list-col">
+          <div class="inbox-toolbar">
+            <label class="inbox-filter-label">
+              View
+              <select id="inboxFilter" class="inbox-select">
+                <option value="all">All</option>
+                <option value="unread">Unread</option>
+                <option value="read">Read</option>
+              </select>
+            </label>
+            <label class="inbox-filter-label">
+              Priority
+              <select id="inboxSort" class="inbox-select">
+                <option value="all">All levels</option>
+                <option value="error">Critical</option>
+                <option value="warning">Warning</option>
+                <option value="info">Info</option>
+              </select>
+            </label>
+          </div>
+          <div class="inbox-list" id="inboxList"></div>
+          <p class="empty-note" id="inboxEmpty" style="display:none;">No notifications match this filter.</p>
+        </div>
+        <div class="inbox-detail-col" id="inboxDetail">
+          <div class="inbox-detail-empty">
+            <i class="fa-regular fa-bell"></i>
+            <p>Select a notification</p>
+            <span>Choose an alert from the list to read the full message and suggested next steps.</span>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../js/storage.js?v=13"></script>
+  <script src="../js/ui.js?v=13"></script>
+  <script src="../js/loader.js?v=7"></script>
+  <script src="../js/auth.js?v=7"></script>
+  <script src="../js/app-nav.js?v=8"></script>
+  <script src="../js/notifications.js?v=13"></script>
+  <script src="../js/notifications-page.js?v=14"></script>
+</body>
+</html>

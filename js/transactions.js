@@ -4,26 +4,33 @@ requireAuth();
 
 let activeFilter = 'all';
 
+function syncCategoryOptions() {
+  const type = document.getElementById('addType').value;
+  fillCategorySelect(document.getElementById('addCategory'), type);
+}
+
 function addTransaction(e) {
   e.preventDefault();
   const type = document.getElementById('addType').value;
-  const category = document.getElementById('addCategory').value.trim() || (type === 'income' ? 'Income' : 'Other');
+  const category = document.getElementById('addCategory').value;
   const amount = Number(document.getElementById('addAmount').value);
   const dateInput = document.getElementById('addDate').value;
   const note = document.getElementById('addNote').value.trim();
   if (!amount || amount <= 0) return;
 
   const data = getData();
-  data.transactions.unshift({
+  data.transactions.unshift(normalizeTransaction({
     id: uid(),
     type,
     amount,
     category,
-    date: dateInput || new Date().toISOString().slice(0, 10),
+    date: dateInput || localDateStr(),
     note,
-  });
+  }));
   saveData(data);
   e.target.reset();
+  document.getElementById('addDate').value = localDateStr();
+  syncCategoryOptions();
   render();
 }
 
@@ -107,8 +114,10 @@ function render() {
   const data = getData();
   renderKPIs(data);
   renderList(data);
+  applyAlertFocusFromSession();
 }
 
 /* default the date picker to today, then render */
-document.getElementById('addDate').value = new Date().toISOString().slice(0, 10);
+document.getElementById('addDate').value = localDateStr();
+syncCategoryOptions();
 render();

@@ -12,83 +12,136 @@
 </head>
 <body>
   <div class="app">
-
-    <aside class="sidebar">
-      <div class="logo" onclick="location.href='../index.html'">
-        <div class="logo-icon"><i class="fa-solid fa-chart-line"></i></div>
-        <div class="logo-text">Fin<span>Track</span></div>
-      </div>
-      <nav class="side-nav">
-        <a href="dashboard.html"><i class="fa-solid fa-gauge-high"></i> Overview</a>
-        <a href="transactions.html"><i class="fa-solid fa-list"></i> Transactions</a>
-        <a href="goals.html" class="active"><i class="fa-solid fa-bullseye"></i> Goals</a>
-        <a href="budgets.html"><i class="fa-solid fa-wallet"></i> Budgets</a>
-        <div class="side-soon-label">Coming soon</div>
-        <a href="#" onclick="comingSoon('Subscriptions'); return false;"><i class="fa-solid fa-rotate"></i> Subscriptions <span class="soon-badge">Soon</span></a>
-        <a href="#" onclick="comingSoon('Reports'); return false;"><i class="fa-solid fa-file-lines"></i> Reports <span class="soon-badge">Soon</span></a>
-        <a href="#" onclick="comingSoon('Net worth tracking'); return false;"><i class="fa-solid fa-chart-pie"></i> Net Worth <span class="soon-badge">Soon</span></a>
-      </nav>
-      <button class="side-logout" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out</button>
-    </aside>
+    <aside class="sidebar" id="appSidebar" data-page="goals"></aside>
 
     <main class="main">
       <div class="topbar">
         <div class="greeting">
           <h1>Savings Goals</h1>
-          <p>Set targets, add funds, and watch your progress grow.</p>
+          <p>Track multiple goals by category, priority, and deadline — all in one place.</p>
         </div>
       </div>
 
-      <!-- KPIs -->
-      <section class="kpi-grid">
+      <section class="kpi-grid kpi-grid-5">
         <div class="kpi-card">
           <div class="kpi-top"><span class="kpi-label">Total Saved</span><span class="kpi-icon" style="background:rgba(0,230,118,0.1);color:#00E676;"><i class="fa-solid fa-piggy-bank"></i></span></div>
           <div class="kpi-value" id="kpiSaved">$0</div>
           <div class="kpi-sub">Across all goals</div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-top"><span class="kpi-label">Total Target</span><span class="kpi-icon" style="background:rgba(212,175,55,0.12);color:#D4AF37;"><i class="fa-solid fa-bullseye"></i></span></div>
+          <div class="kpi-top"><span class="kpi-label">Active Target</span><span class="kpi-icon" style="background:rgba(212,175,55,0.12);color:#D4AF37;"><i class="fa-solid fa-bullseye"></i></span></div>
           <div class="kpi-value" id="kpiTarget">$0</div>
-          <div class="kpi-sub">Combined goals</div>
+          <div class="kpi-sub">Open goals only</div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-top"><span class="kpi-label">Overall Progress</span><span class="kpi-icon" style="background:rgba(110,168,254,0.12);color:#6EA8FE;"><i class="fa-solid fa-chart-line"></i></span></div>
+          <div class="kpi-top"><span class="kpi-label">Active Progress</span><span class="kpi-icon" style="background:rgba(110,168,254,0.12);color:#6EA8FE;"><i class="fa-solid fa-chart-line"></i></span></div>
           <div class="kpi-value" id="kpiProgress">0%</div>
-          <div class="kpi-sub">Saved vs target</div>
+          <div class="kpi-sub">Saved vs active targets</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-top"><span class="kpi-label">Active Goals</span><span class="kpi-icon" style="background:rgba(255,159,69,0.12);color:#FF9F45;"><i class="fa-solid fa-list-check"></i></span></div>
           <div class="kpi-value" id="kpiGoals">0</div>
-          <div class="kpi-sub">Being tracked</div>
+          <div class="kpi-sub">In progress</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><span class="kpi-label">Monthly Plan</span><span class="kpi-icon" style="background:rgba(157,123,255,0.12);color:#9D7BFF;"><i class="fa-solid fa-repeat"></i></span></div>
+          <div class="kpi-value" id="kpiMonthly">$0</div>
+          <div class="kpi-sub">Planned contributions</div>
         </div>
       </section>
 
-      <!-- ADD GOAL -->
       <section class="panel">
-        <h3>Create a goal</h3>
-        <p class="panel-sub">Give it a name, a target, and an optional deadline.</p>
-        <form class="form-row" onsubmit="addGoal(event)">
-          <input type="text" id="goalName" placeholder="Goal name (e.g. Emergency Fund)"/>
-          <input type="number" id="goalTarget" placeholder="Target amount" min="0"/>
-          <input type="number" id="goalSaved" placeholder="Already saved (optional)" min="0"/>
-          <input type="date" id="goalDeadline"/>
-          <button type="submit"><i class="fa-solid fa-plus"></i> Add Goal</button>
+        <div class="panel-head-row">
+          <div>
+            <h3 id="goalFormTitle">Create a goal</h3>
+            <p class="panel-sub">Pick a category, set your target, and optionally plan monthly contributions.</p>
+          </div>
+          <button type="button" class="filter-pill" id="goalCancelBtn" style="display:none;" onclick="resetGoalForm()">Cancel edit</button>
+        </div>
+
+        <p class="field-label">Goal category</p>
+        <div class="chip-grid compact" id="goalCategoryChips">
+          <div class="chip selected" data-value="emergency"><i class="fa-solid fa-shield-halved"></i> Emergency</div>
+          <div class="chip" data-value="purchase"><i class="fa-solid fa-cart-shopping"></i> Purchase</div>
+          <div class="chip" data-value="debt"><i class="fa-solid fa-hand-holding-dollar"></i> Debt</div>
+          <div class="chip" data-value="investment"><i class="fa-solid fa-seedling"></i> Invest</div>
+          <div class="chip" data-value="travel"><i class="fa-solid fa-plane"></i> Travel</div>
+          <div class="chip" data-value="education"><i class="fa-solid fa-graduation-cap"></i> Education</div>
+          <div class="chip" data-value="home"><i class="fa-solid fa-house"></i> Home</div>
+          <div class="chip" data-value="retirement"><i class="fa-solid fa-umbrella-beach"></i> Retirement</div>
+          <div class="chip" data-value="custom"><i class="fa-solid fa-bullseye"></i> Custom</div>
+        </div>
+
+        <form class="goal-form" id="goalForm" onsubmit="addGoal(event)">
+          <div class="form-grid">
+            <div class="field">
+              <label for="goalName">Goal name <span class="field-hint">(optional — defaults to category)</span></label>
+              <input type="text" id="goalName" placeholder="e.g. Hawaii trip, New car…"/>
+            </div>
+            <div class="field">
+              <label for="goalTarget">Target amount</label>
+              <input type="number" id="goalTarget" placeholder="10000" min="0" required/>
+            </div>
+            <div class="field">
+              <label for="goalSaved">Already saved</label>
+              <input type="number" id="goalSaved" placeholder="0" min="0"/>
+            </div>
+            <div class="field">
+              <label for="goalDeadline">Deadline</label>
+              <input type="date" id="goalDeadline"/>
+            </div>
+            <div class="field">
+              <label for="goalPriority">Priority</label>
+              <select id="goalPriority">
+                <option value="high">High</option>
+                <option value="medium" selected>Medium</option>
+                <option value="low">Low</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="goalMonthly">Monthly contribution</label>
+              <input type="number" id="goalMonthly" placeholder="Optional" min="0"/>
+            </div>
+          </div>
+          <div class="field">
+            <label for="goalNote">Notes (optional)</label>
+            <input type="text" id="goalNote" placeholder="Why this goal matters…"/>
+          </div>
+          <button type="submit" class="btn-gold" id="goalSubmitBtn"><i class="fa-solid fa-plus"></i> Add Goal</button>
         </form>
       </section>
 
-      <!-- GOAL CARDS -->
       <section class="panel">
-        <h3>Your goals</h3>
-        <p class="panel-sub">Add funds to update progress</p>
+        <div class="panel-head-row">
+          <div>
+            <h3>Your goals</h3>
+            <p class="panel-sub">Filter, deposit, withdraw, or edit any goal.</p>
+          </div>
+        </div>
+        <div class="filters" id="statusFilters">
+          <button class="filter-pill active" data-filter="all" onclick="setFilter(this,'status')">All</button>
+          <button class="filter-pill" data-filter="active" onclick="setFilter(this,'status')">Active</button>
+          <button class="filter-pill" data-filter="completed" onclick="setFilter(this,'status')">Completed</button>
+        </div>
+        <div class="filters" id="categoryFilters">
+          <button class="filter-pill active" data-cat="all" onclick="setFilter(this,'cat')">All categories</button>
+          <button class="filter-pill" data-cat="emergency" onclick="setFilter(this,'cat')">Emergency</button>
+          <button class="filter-pill" data-cat="purchase" onclick="setFilter(this,'cat')">Purchase</button>
+          <button class="filter-pill" data-cat="debt" onclick="setFilter(this,'cat')">Debt</button>
+          <button class="filter-pill" data-cat="investment" onclick="setFilter(this,'cat')">Invest</button>
+          <button class="filter-pill" data-cat="travel" onclick="setFilter(this,'cat')">Travel</button>
+        </div>
         <div class="goals-wrap" id="goalsWrap"></div>
         <p class="empty-note" id="goalsEmpty" style="display:none;">No goals yet. Create one above.</p>
       </section>
     </main>
   </div>
 
-  <script src="../js/storage.js"></script>
-  <script src="../js/ui.js"></script>
-  <script src="../js/auth.js"></script>
-  <script src="../js/goals.js"></script>
+  <script src="../js/storage.js?v=7"></script>
+  <script src="../js/ui.js?v=10"></script>
+  <script src="../js/loader.js?v=7"></script>
+  <script src="../js/auth.js?v=7"></script>
+  <script src="../js/app-nav.js?v=7"></script>
+  <script src="../js/goals.js?v=7"></script>
 </body>
 </html>

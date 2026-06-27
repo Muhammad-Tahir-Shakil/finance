@@ -16,6 +16,52 @@
 
 <body>
 
+  <!-- WEBSITE ENTRANCE LOADER (ENTRANCE SPLASH SCREEN) -->
+  <div id="initial-splash" class="splash-screen">
+    <div class="splash-glow-1"></div>
+    <div class="splash-glow-2"></div>
+    <div class="floating-container">
+      <div class="floating-item item-coin1"><i class="fa-solid fa-coins"></i></div>
+      <div class="floating-item item-card"><i class="fa-solid fa-credit-card"></i></div>
+      <div class="floating-item item-trend"><i class="fa-solid fa-arrow-trend-up"></i></div>
+      <div class="floating-item item-cash"><i class="fa-solid fa-money-bill-wave"></i></div>
+      <div class="floating-item item-coin2"><i class="fa-solid fa-circle-dollar-to-slot"></i></div>
+      <div class="floating-item item-wallet"><i class="fa-solid fa-wallet"></i></div>
+      <div class="floating-item item-piggy"><i class="fa-solid fa-piggy-bank"></i></div>
+      <div class="floating-item item-receipt"><i class="fa-solid fa-receipt"></i></div>
+      <div class="floating-item item-vault"><i class="fa-solid fa-vault"></i></div>
+      <div class="floating-item item-pie"><i class="fa-solid fa-chart-pie"></i></div>
+      <div class="floating-item item-gem"><i class="fa-solid fa-gem"></i></div>
+    </div>
+    <div class="splash-core">
+      <div class="splash-logo-shield">
+        <i class="fa-solid fa-chart-line"></i>
+        <div class="radar-pulse"></div>
+      </div>
+      <h1 class="splash-title">Fin<span>Track</span></h1>
+      <div class="splash-loading-line"><span></span></div>
+    </div>
+  </div>
+
+  <!-- PAGE LOADER ANIMATION -->
+  <div id="page-loader" class="page-loader">
+    <div class="loader-blur-1"></div>
+    <div class="loader-blur-2"></div>
+    <div class="loader-container">
+      <div class="loader-ring-wrapper">
+        <div class="loader-ring"></div>
+        <div class="loader-logo-icon"><i class="fa-solid fa-chart-line"></i></div>
+      </div>
+      <div class="loader-brand">
+        <h2 class="loader-text">Fin<span>Track</span></h2>
+        <div class="loader-status">
+          <span class="status-dot"></span>
+          <p class="status-text">Securing financial workspace...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <nav class="navbar">
     <div class="logo" onclick="location.href='index.html'">
       <div class="logo-icon"><i class="fa-solid fa-chart-line"></i></div>
@@ -214,7 +260,8 @@
     </div>
   </footer>
 
-  <script src="js/storage.js"></script>
-  <script src="js/nav.js"></script>
+  <script src="js/storage.js?v=7"></script>
+  <script src="js/loader.js?v=7"></script>
+  <script src="js/nav.js?v=7"></script>
 </body>
 </html>

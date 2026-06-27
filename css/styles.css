@@ -1,15 +1,328 @@
+/* ============================================================
+   CINEMATIC 3D FLOATING ENTRANCE SPLASH SCREEN
+   ============================================================ */
+
+.splash-screen {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-color: #0A192F;
+  z-index: 100000; /* Above regular page loaders */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.8s cubic-bezier(0.77, 0, 0.175, 1),
+              visibility 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* Exit Utility State triggered by JS */
+.splash-screen.dismissed {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Ambient Deep Lighting */
+.splash-glow-1, .splash-glow-2 {
+  position: absolute; width: 500px; height: 500px; border-radius: 50%; filter: blur(160px); opacity: 0.4; pointer-events: none;
+}
+.splash-glow-1 { background: rgba(212, 175, 55, 0.12); top: 20%; left: 15%; animation: lightShift 8s infinite alternate ease-in-out; }
+.splash-glow-2 { background: rgba(30, 66, 122, 0.2); bottom: 10%; right: 15%; animation: lightShift 8s infinite alternate-reverse ease-in-out; }
+
+/* Main Central Brand Hub */
+.splash-core {
+  text-align: center;
+  position: relative;
+  z-index: 10;
+  animation: coreEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.splash-logo-shield {
+  position: relative;
+  width: 100px; height: 100px;
+  background: rgba(17, 34, 64, 0.6);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 24px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 42px; color: #D4AF37; margin: 0 auto 24px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  backdrop-filter: blur(10px);
+}
+
+.radar-pulse {
+  position: absolute; width: 100%; height: 100%;
+  border: 1px solid #D4AF37; border-radius: 24px;
+  animation: radarExpand 2s infinite ease-out;
+  opacity: 0; pointer-events: none;
+}
+
+.splash-title {
+  font-family: 'Poppins', sans-serif; font-size: 40px; font-weight: 700; color: #fff; letter-spacing: 1.5px; margin-bottom: 16px;
+}
+.splash-title span { color: #D4AF37; text-shadow: 0 0 20px rgba(212,175,55,0.3); }
+
+/* Premium thin timing runner strip */
+.splash-loading-line {
+  width: 180px; height: 2px; background: rgba(255,255,255,0.05); margin: 0 auto; border-radius: 2px; overflow: hidden;
+}
+.splash-loading-line span {
+  display: block; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+  transform: translateX(-100%); animation: stripMove 2s infinite linear;
+}
+
+/* --- Floating Ecosystem Generator --- */
+.floating-container { position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 5; pointer-events: none; }
+.floating-item {
+  position: absolute; font-size: 28px;
+  color: rgba(255, 255, 255, 0.12); /* Semi-transparent ghost tokens */
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
+  animation: floatBehavior 6s infinite ease-in-out;
+}
+
+/* --- Expanded Floating Grid Vectors & Spatial Depth --- */
+
+.item-coin1  { top: 12%; left: 14%; font-size: 34px; color: rgba(212,175,55,0.18); animation-duration: 7s; }
+.item-card   { top: 22%; right: 18%; font-size: 42px; transform: rotate(15deg); animation-duration: 9s; animation-delay: -1s; }
+.item-trend  { bottom: 25%; left: 16%; font-size: 32px; color: rgba(0,230,118,0.15); animation-duration: 8s; animation-delay: -3s; }
+.item-cash   { bottom: 28%; right: 14%; font-size: 46px; transform: rotate(-25deg); animation-duration: 10s; animation-delay: -2s; }
+.item-coin2  { top: 68%; left: 38%; font-size: 24px; animation-duration: 6s; animation-delay: -4s; }
+.item-wallet { top: 48%; left: 82%; font-size: 36px; animation-duration: 11s; }
+
+
+/* Coordinates for the New Tokens Layer */
+.item-piggy  { top: 18%; left: 78%; font-size: 38px; color: rgba(212,175,55,0.14); transform: rotate(-10deg); animation-duration: 8.5s; animation-delay: -1.5s; }
+.item-receipt { top: 52%; left: 12%; font-size: 28px; transform: rotate(20deg); animation-duration: 7.5s; animation-delay: -5s; }
+.item-vault  { bottom: 14%; right: 46%; font-size: 30px; animation-duration: 9.5s; animation-delay: -2.5s; }
+.item-pie    { top: 40%; left: 48%; font-size: 32px; color: rgba(30, 66, 122, 0.22); animation-duration: 12s; animation-delay: -6s; }
+.item-gem    { bottom: 16%; left: 74%; font-size: 26px; color: rgba(0,230,118,0.12); transform: rotate(45deg); animation-duration: 6.8s; animation-delay: -0.5s; }
+
+/* Micro adjustment to keep objects centered and balanced under small phone widths */
+@media (max-width: 768px) {
+  .item-card, .item-piggy, .item-wallet { right: 8%; }
+  .item-coin1, .item-receipt, .item-trend { left: 6%; }
+  .item-pie, .item-vault { display: none; } /* Drop middle hidden cluster nodes to preserve readability */
+
+}
+
+/* ============================================================
+   SYSTEM MOTION CONTROLLERS KEYFRAMES
+   ============================================================ */
+@keyframes coreEntrance {
+  from { opacity: 0; transform: translateY(20px) scale(0.96); filter: blur(4px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+@keyframes radarExpand {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+@keyframes stripMove {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+@keyframes floatBehavior {
+  0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+  50% { transform: translateY(-30px) rotate(12deg) scale(1.05); color: rgba(212,175,55,0.25); }
+}
+@keyframes lightShift {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(40px, -30px) scale(1.15); }
+}
+
+
+
+
+/* ============================================================
+   PREMIUM GLASSMORPHISM & GLOWING PAGE PRELOADER
+   ============================================================ */
+
+
+.page-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-dark);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1), 
+              visibility 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  overflow: hidden;
+}
+
+/* Smooth exit transition */
+.page-loader.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(1.03); /* Subtle expansion effect on exit */
+}
+
+/* Luxury Ambient Blur Orbs */
+.loader-blur-1, .loader-blur-2 {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  z-index: 1;
+  opacity: 0.6;
+  animation: ambientFloat 6s infinite ease-in-out;
+}
+.loader-blur-1 {
+  width: 300px;
+  height: 300px;
+  background: rgba(212, 175, 55, 0.08);
+  top: -50px;
+  right: -50px;
+}
+.loader-blur-2 {
+  width: 400px;
+  height: 400px;
+  background: rgba(30, 66, 122, 0.15);
+  bottom: -100px;
+  left: -100px;
+  animation-delay: -3s;
+}
+
+/* Glassmorphism Container Card */
+.loader-container {
+  position: relative;
+  z-index: 2;
+  background: var(--bg-card);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  padding: 50px 60px;
+  border-radius: 28px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  width: 90%;
+  max-width: 380px;
+}
+
+/* Glowing/Spinning Ring Engine */
+.loader-ring-wrapper {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 3px solid rgba(255, 255, 255, 0.03);
+  border-top: 3px solid var(--gold-main);
+  border-right: 3px solid var(--gold-main);
+  border-radius: 50%;
+  animation: spinnerRotate 1s linear infinite;
+  filter: drop-shadow(0 0 8px var(--gold-glow));
+}
+
+.loader-logo-icon {
+  font-size: 32px;
+  color: #fff;
+  animation: logoPulse 2s infinite ease-in-out;
+}
+
+/* Branding & Status Info */
+.loader-brand {
+  text-align: center;
+}
+
+.loader-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+
+.loader-text span {
+  color: var(--gold-main);
+  text-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+}
+
+/* Micro-interactions: Status text + Blinking pulse dot */
+.loader-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--teal-accent);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--teal-accent);
+  animation: pulseDot 1.2s infinite ease-in-out;
+}
+
+.status-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  color: #5a6b85;
+  font-weight: 400;
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+/* ============================================================
+   ANIMATION KEYFRAMES
+   ============================================================ */
+
+@keyframes spinnerRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes logoPulse {
+  0%, 100% { transform: scale(1); color: #fff; }
+  50% { transform: scale(1.05); color: var(--gold-main); filter: drop-shadow(0 0 4px var(--gold-glow)); }
+}
+
+@keyframes ambientFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 0.4; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+
+
+
 /* ===== FinTrack shared theme: variables, reset, navbar, buttons, footer ===== */
 :root {
   --bg: #081120;
   --bg-alt: #0A1424;
+  --bg-dark: #0A192F;
+  --bg-card: rgba(17, 34, 64, 0.75);
   --card: rgba(17, 34, 64, 0.48);
   --card-solid: #112344;
   --gold: #D4AF37;
   --gold-light: #F5D76E;
+  --gold-main: #D4AF37;
+  --gold-glow: rgba(212, 175, 55, 0.3);
   --text: #CCD6F6;
   --heading: #ffffff;
   --muted: #9FB3C8;
   --green: #00E676;
+  --teal-accent: #00E676;
   --red: #FF5252;
   --blue: #6EA8FE;
   --line: rgba(255, 255, 255, 0.065);

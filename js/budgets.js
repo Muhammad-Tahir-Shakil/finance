@@ -9,7 +9,7 @@ let budgetChart;
 function spentFor(data, cat) {
   const m = monthKey();
   return data.transactions
-    .filter((t) => t.type === 'expense' && t.category === cat && t.date.startsWith(m))
+    .filter((t) => t.type === 'expense' && t.category === cat && txMonthKey(t.date) === m)
     .reduce((s, t) => s + Number(t.amount), 0);
 }
 
@@ -83,6 +83,7 @@ function renderRows(data) {
     const over = spent > limit;
     const row = document.createElement('div');
     row.className = 'budget-row';
+    row.dataset.budgetCat = cat;
     row.innerHTML = `
       <div class="b-name"><i class="fa-solid ${catIcon(cat)}"></i> ${cat}</div>
       <div class="b-figures"><b>${money(spent)}</b> / ${money(limit)} · ${pct}%</div>
@@ -97,6 +98,8 @@ function render() {
   renderKPIs(data);
   renderChart(data);
   renderRows(data);
+  applyAlertFocusFromSession();
 }
 
+fillCategorySelect(document.getElementById('budgetCat'), 'expense');
 render();
