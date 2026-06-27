@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
   <link rel="stylesheet" href="../css/styles.css"/>
-  <link rel="stylesheet" href="../css/dashboard.css"/>
+  <link rel="stylesheet" href="../css/dashboard.css?v=15"/>
 </head>
 <body>
   <div class="app">
@@ -53,7 +53,7 @@
         <h3>Add a transaction</h3>
         <p class="panel-sub">Choose a type, enter a category and amount.</p>
 
-        <form class="form-row" onsubmit="addTransaction(event)">
+        <form class="form-row" onsubmit="addTransaction(event)" novalidate>
           <select id="addType" onchange="syncCategoryOptions()">
             <option value="expense">Expense</option>
             <option value="income">Income</option>
@@ -64,6 +64,7 @@
           <input type="text" id="addNote" placeholder="Note (optional)"/>
           <button type="submit"><i class="fa-solid fa-plus"></i> Add</button>
         </form>
+        <p class="form-error" id="txFormError"></p>
 
         <div class="filters">
           <button class="filter-pill active" data-filter="all" onclick="setFilter(this)">All</button>
@@ -78,7 +79,7 @@
   </div>
 
   <script src="../js/storage.js?v=8"></script>
-  <script src="../js/ui.js?v=10"></script>
+  <script src="../js/ui.js?v=14"></script>
   <script src="../js/loader.js?v=7"></script>
   <script src="../js/auth.js?v=7"></script>
   <script src="../js/app-nav.js?v=9"></script>

@@ -418,6 +418,87 @@ def test_file_integrity():
         assert_(content.count('{') == content.count('}'), f'{rel} balanced braces')
 
 
+def test_password_toggle_ui():
+    section('Password visibility toggle (auth UI)')
+
+    signup = (ROOT / 'pages/signup.html').read_text()
+    login = (ROOT / 'pages/login.html').read_text()
+    auth_css = (ROOT / 'css/auth.css').read_text()
+    auth_js = (ROOT / 'js/auth.js').read_text()
+
+    assert_(signup.count('class="input-with-toggle"') >= 2, 'Signup wraps both password fields')
+    assert_(login.count('class="input-with-toggle"') >= 1, 'Login wraps password field')
+    assert_('id="signupForm"' in signup, 'Signup form uses JS-bound signupForm id')
+    assert_('id="loginForm"' in login, 'Login form uses JS-bound loginForm id')
+    assert_('auth.css?v=11' in signup, 'Signup loads versioned auth.css')
+    assert_('auth.js?v=11' in signup, 'Signup loads versioned auth.js')
+    assert_('auth.css?v=11' in login, 'Login loads versioned auth.css')
+    assert_('auth.js?v=11' in login, 'Login loads versioned auth.js')
+
+    for label, html in [('signup', signup), ('login', login)]:
+        assert_('toggle-visibility' in html, f'{label} has toggle button')
+        assert_('fa-eye-slash' in html, f'{label} defaults to hidden-password icon')
+        assert_('data-target="password"' in html, f'{label} toggle targets password input')
+
+    assert_('data-target="confirmPassword"' in signup, 'Signup confirm password toggle wired')
+    assert_('position: absolute' in auth_css and 'right: 10px' in auth_css, 'Toggle anchored to right edge')
+    assert_('transform: translateY(-50%)' in auth_css, 'Toggle vertically centered in input')
+    assert_('z-index: 3' in auth_css, 'Toggle sits above input for clicks')
+    assert_('padding-right: 46px' in auth_css, 'Input reserves space for toggle icon')
+
+    assert_('function syncPasswordToggle' in auth_js, 'auth.js defines syncPasswordToggle')
+    assert_('function initAuthPage' in auth_js, 'auth.js initializes auth page on DOM ready')
+    assert_('function validatePassword' in auth_js, 'auth.js validates passwords')
+    assert_('const passwordError = validatePassword(password);' in auth_js, 'Login uses shared password validation')
+    assert_('Password must include at least one letter' in auth_js, 'auth.js rejects letter-less passwords')
+    assert_('Password must include at least one number' in auth_js, 'auth.js rejects number-less passwords')
+    assert_("fa-eye${visible ? '' : '-slash'}" in auth_js, 'Open eye means visible, slash means hidden')
+    assert_('pointer-events: none' in (ROOT / 'css/styles.css').read_text(), 'Loader stops blocking clicks after fade-out')
+
+    def icon_suffix(visible):
+        return '' if visible else '-slash'
+
+    assert_(icon_suffix(False) == '-slash', 'Hidden password uses eye-slash icon')
+    assert_(icon_suffix(True) == '', 'Visible password uses open eye icon')
+
+    assert_(auth_js.count('{') == auth_js.count('}'), 'auth.js balanced braces')
+
+
+def test_dashboard_form_validation():
+    section('Dashboard form validation helpers')
+
+    ui = (ROOT / 'js/ui.js').read_text()
+    assert_('function validateRequiredAmount' in ui, 'ui.js validates required amounts')
+    assert_('function validateRequiredText' in ui, 'ui.js validates required text')
+    assert_('function setFormFieldError' in ui, 'ui.js sets inline field errors')
+
+    tx = (ROOT / 'js/transactions.js').read_text()
+    assert_('validateRequiredAmount' in tx, 'transactions.js validates amount')
+    assert_('txFormError' in tx, 'transactions.js shows form error summary')
+
+    goals = (ROOT / 'js/goals.js').read_text()
+    assert_('function validateGoalForm' in goals, 'goals.js validates goal form')
+
+    onboarding = (ROOT / 'js/onboarding.js').read_text()
+    assert_('function validateStep' in onboarding, 'onboarding.js validates wizard steps')
+    assert_('addEventListener(\'click\', nextStep)' in onboarding, 'onboarding wires Continue button in JS')
+
+    onboarding_html = (ROOT / 'pages/onboarding.html').read_text()
+    assert_('auth.css?v=11' in onboarding_html, 'Onboarding loads versioned auth.css')
+    assert_('onboarding.js?v=9' in onboarding_html, 'Onboarding loads versioned onboarding.js')
+
+    for page, form_id in [
+        ('pages/transactions.html', 'txFormError'),
+        ('pages/budgets.html', 'budgetFormError'),
+        ('pages/subscriptions.html', 'subFormError'),
+        ('pages/goals.html', 'goalFormError'),
+        ('pages/networth.html', 'assetFormError'),
+    ]:
+        html = (ROOT / page).read_text()
+        assert_(form_id in html, f'{page} includes {form_id}')
+        assert_('ui.js?v=14' in html, f'{page} loads ui.js v14')
+
+
 def main():
     print('\nFinTrack Full Test Suite\n')
     test_storage()
@@ -428,6 +509,8 @@ def main():
     test_networth()
     test_notifications()
     test_file_integrity()
+    test_password_toggle_ui()
+    test_dashboard_form_validation()
     test_static_assets()
 
     print(f"\n{'=' * 50}")

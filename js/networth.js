@@ -8,32 +8,56 @@ let nwChart;
 
 function addAsset(e) {
   e.preventDefault();
-  const name = document.getElementById('assetName').value.trim();
+
+  const name = document.getElementById('assetName').value;
+  const valueRaw = document.getElementById('assetValue').value;
+  const nameError = validateRequiredText(name, 'Asset name', { min: 2, max: 80 });
+  const valueError = validateRequiredAmount(valueRaw, 'Asset value');
+
+  setFormFieldError('assetName', 'assetNameError', nameError);
+  setFormFieldError('assetValue', 'assetValueError', valueError);
+  if (!showFormErrors([nameError, valueError], 'assetFormError')) return;
+
   const type = document.getElementById('assetType').value;
-  const value = Number(document.getElementById('assetValue').value);
-  if (!name || !value || value <= 0) return;
+  const value = parseFormAmount(valueRaw);
 
   const data = getData();
-  data.netWorth.assets.push({ id: uid(), name, type, value });
+  data.netWorth.assets.push({ id: uid(), name: name.trim(), type, value });
   snapshotNetWorth(data);
   saveData(data);
   e.target.reset();
+  clearFormErrors([
+    { field: 'assetName', error: 'assetNameError' },
+    { field: 'assetValue', error: 'assetValueError' },
+  ], 'assetFormError');
   render();
   showToast('Asset added.', 'fa-circle-check');
 }
 
 function addLiability(e) {
   e.preventDefault();
-  const name = document.getElementById('liabilityName').value.trim();
+
+  const name = document.getElementById('liabilityName').value;
+  const valueRaw = document.getElementById('liabilityValue').value;
+  const nameError = validateRequiredText(name, 'Liability name', { min: 2, max: 80 });
+  const valueError = validateRequiredAmount(valueRaw, 'Amount owed');
+
+  setFormFieldError('liabilityName', 'liabilityNameError', nameError);
+  setFormFieldError('liabilityValue', 'liabilityValueError', valueError);
+  if (!showFormErrors([nameError, valueError], 'liabilityFormError')) return;
+
   const type = document.getElementById('liabilityType').value;
-  const value = Number(document.getElementById('liabilityValue').value);
-  if (!name || !value || value <= 0) return;
+  const value = parseFormAmount(valueRaw);
 
   const data = getData();
-  data.netWorth.liabilities.push({ id: uid(), name, type, value });
+  data.netWorth.liabilities.push({ id: uid(), name: name.trim(), type, value });
   snapshotNetWorth(data);
   saveData(data);
   e.target.reset();
+  clearFormErrors([
+    { field: 'liabilityName', error: 'liabilityNameError' },
+    { field: 'liabilityValue', error: 'liabilityValueError' },
+  ], 'liabilityFormError');
   render();
   showToast('Liability added.', 'fa-circle-check');
 }
@@ -182,4 +206,12 @@ function render() {
   renderItems(data);
 }
 
+bindFormInputClear([
+  { field: 'assetName', error: 'assetNameError' },
+  { field: 'assetValue', error: 'assetValueError' },
+], 'assetFormError');
+bindFormInputClear([
+  { field: 'liabilityName', error: 'liabilityNameError' },
+  { field: 'liabilityValue', error: 'liabilityValueError' },
+], 'liabilityFormError');
 render();

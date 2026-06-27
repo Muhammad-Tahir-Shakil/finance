@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
   <link rel="stylesheet" href="../css/styles.css"/>
-  <link rel="stylesheet" href="../css/dashboard.css"/>
+  <link rel="stylesheet" href="../css/dashboard.css?v=15"/>
 </head>
 <body>
   <div class="app">
@@ -71,24 +71,29 @@
           <div class="chip" data-value="retirement"><i class="fa-solid fa-umbrella-beach"></i> Retirement</div>
           <div class="chip" data-value="custom"><i class="fa-solid fa-bullseye"></i> Custom</div>
         </div>
+        <p class="field-error" id="goalCategoryError"></p>
 
-        <form class="goal-form" id="goalForm" onsubmit="addGoal(event)">
+        <form class="goal-form" id="goalForm" onsubmit="addGoal(event)" novalidate>
           <div class="form-grid">
             <div class="field">
               <label for="goalName">Goal name <span class="field-hint">(optional — defaults to category)</span></label>
               <input type="text" id="goalName" placeholder="e.g. Hawaii trip, New car…"/>
+              <p class="field-error" id="goalNameError"></p>
             </div>
             <div class="field">
               <label for="goalTarget">Target amount</label>
-              <input type="number" id="goalTarget" placeholder="10000" min="0" required/>
+              <input type="number" id="goalTarget" placeholder="10000" min="0" step="0.01"/>
+              <p class="field-error" id="goalTargetError"></p>
             </div>
             <div class="field">
               <label for="goalSaved">Already saved</label>
-              <input type="number" id="goalSaved" placeholder="0" min="0"/>
+              <input type="number" id="goalSaved" placeholder="0" min="0" step="0.01"/>
+              <p class="field-error" id="goalSavedError"></p>
             </div>
             <div class="field">
               <label for="goalDeadline">Deadline</label>
               <input type="date" id="goalDeadline"/>
+              <p class="field-error" id="goalDeadlineError"></p>
             </div>
             <div class="field">
               <label for="goalPriority">Priority</label>
@@ -100,13 +105,16 @@
             </div>
             <div class="field">
               <label for="goalMonthly">Monthly contribution</label>
-              <input type="number" id="goalMonthly" placeholder="Optional" min="0"/>
+              <input type="number" id="goalMonthly" placeholder="Optional" min="0" step="0.01"/>
+              <p class="field-error" id="goalMonthlyError"></p>
             </div>
           </div>
           <div class="field">
             <label for="goalNote">Notes (optional)</label>
             <input type="text" id="goalNote" placeholder="Why this goal matters…"/>
+            <p class="field-error" id="goalNoteError"></p>
           </div>
+          <p class="form-error" id="goalFormError"></p>
           <button type="submit" class="btn-gold" id="goalSubmitBtn"><i class="fa-solid fa-plus"></i> Add Goal</button>
         </form>
       </section>
@@ -138,10 +146,10 @@
   </div>
 
   <script src="../js/storage.js?v=7"></script>
-  <script src="../js/ui.js?v=10"></script>
+  <script src="../js/ui.js?v=14"></script>
   <script src="../js/loader.js?v=7"></script>
   <script src="../js/auth.js?v=7"></script>
   <script src="../js/app-nav.js?v=9"></script>
-  <script src="../js/goals.js?v=7"></script>
+  <script src="../js/goals.js?v=8"></script>
 </body>
 </html>

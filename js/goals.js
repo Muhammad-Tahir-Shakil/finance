@@ -11,6 +11,9 @@ function selectGoalCategory(chip) {
   document.querySelectorAll('#goalCategoryChips .chip').forEach((c) => c.classList.remove('selected'));
   chip.classList.add('selected');
   selectedGoalCategory = chip.dataset.value;
+  document.getElementById('goalCategoryChips')?.classList.remove('field-invalid');
+  const err = document.getElementById('goalCategoryError');
+  if (err) err.textContent = '';
 }
 
 document.querySelectorAll('#goalCategoryChips .chip').forEach((chip) => {
@@ -23,27 +26,77 @@ function resetGoalForm() {
   document.getElementById('goalSubmitBtn').innerHTML = '<i class="fa-solid fa-plus"></i> Add Goal';
   document.getElementById('goalCancelBtn').style.display = 'none';
   document.getElementById('goalForm').reset();
+  clearFormErrors([
+    { field: 'goalName', error: 'goalNameError' },
+    { field: 'goalTarget', error: 'goalTargetError' },
+    { field: 'goalSaved', error: 'goalSavedError' },
+    { field: 'goalDeadline', error: 'goalDeadlineError' },
+    { field: 'goalMonthly', error: 'goalMonthlyError' },
+    { field: 'goalNote', error: 'goalNoteError' },
+  ], 'goalFormError');
+  document.getElementById('goalCategoryChips')?.classList.remove('field-invalid');
   document.querySelectorAll('#goalCategoryChips .chip').forEach((c) => c.classList.remove('selected'));
   const first = document.querySelector('#goalCategoryChips .chip[data-value="emergency"]');
   if (first) selectGoalCategory(first);
 }
 
+function validateGoalForm() {
+  const customName = document.getElementById('goalName').value;
+  const targetRaw = document.getElementById('goalTarget').value;
+  const savedRaw = document.getElementById('goalSaved').value;
+  const deadline = document.getElementById('goalDeadline').value;
+  const monthlyRaw = document.getElementById('goalMonthly').value;
+  const note = document.getElementById('goalNote').value;
+
+  let nameError = '';
+  if (selectedGoalCategory === 'custom') {
+    nameError = validateRequiredText(customName, 'Goal name', { min: 2, max: 80 });
+  } else {
+    nameError = validateOptionalText(customName, 'Goal name', 80);
+  }
+
+  const targetError = validateRequiredAmount(targetRaw, 'Target amount');
+  const target = parseFormAmount(String(targetRaw).trim());
+  const savedError = validateOptionalAmount(savedRaw, 'Already saved', target);
+  const deadlineError = validateOptionalDate(deadline);
+  let monthlyError = validateOptionalAmount(monthlyRaw, 'Monthly contribution');
+  const noteError = validateOptionalText(note, 'Note', 200);
+
+  if (!selectedGoalCategory) {
+    document.getElementById('goalCategoryChips')?.classList.add('field-invalid');
+    const catErrorEl = document.getElementById('goalCategoryError');
+    if (catErrorEl) catErrorEl.textContent = 'Select a goal category.';
+  } else {
+    document.getElementById('goalCategoryChips')?.classList.remove('field-invalid');
+    const catErrorEl = document.getElementById('goalCategoryError');
+    if (catErrorEl) catErrorEl.textContent = '';
+  }
+
+  setFormFieldError('goalName', 'goalNameError', nameError);
+  setFormFieldError('goalTarget', 'goalTargetError', targetError);
+  setFormFieldError('goalSaved', 'goalSavedError', savedError);
+  setFormFieldError('goalDeadline', 'goalDeadlineError', deadlineError);
+  setFormFieldError('goalMonthly', 'goalMonthlyError', monthlyError);
+  setFormFieldError('goalNote', 'goalNoteError', noteError);
+
+  const errors = [nameError, targetError, savedError, deadlineError, monthlyError, noteError];
+  if (!selectedGoalCategory) errors.unshift('Select a goal category.');
+  return showFormErrors(errors, 'goalFormError', '#goalForm');
+}
+
 function addGoal(e) {
   e.preventDefault();
+  if (!validateGoalForm()) return;
+
   const customName = document.getElementById('goalName').value.trim();
   const meta = goalMeta(selectedGoalCategory);
   const name = customName || (selectedGoalCategory === 'custom' ? '' : meta.label);
-  const target = Number(document.getElementById('goalTarget').value);
-  const saved = Number(document.getElementById('goalSaved').value) || 0;
+  const target = parseFormAmount(document.getElementById('goalTarget').value);
+  const saved = parseFormAmount(document.getElementById('goalSaved').value) || 0;
   const deadline = document.getElementById('goalDeadline').value;
   const priority = document.getElementById('goalPriority').value;
-  const monthlyContribution = Number(document.getElementById('goalMonthly').value) || 0;
+  const monthlyContribution = parseFormAmount(document.getElementById('goalMonthly').value) || 0;
   const note = document.getElementById('goalNote').value.trim();
-
-  if (!name || !target || target <= 0) {
-    showToast(selectedGoalCategory === 'custom' && !customName ? 'Enter a name for your custom goal.' : 'Enter a target amount.', 'fa-circle-exclamation');
-    return;
-  }
 
   const data = getData();
   const goalPayload = {
@@ -101,8 +154,15 @@ function editGoal(id) {
 
 function adjustFunds(id, type) {
   const input = document.getElementById(`${type}_${id}`);
-  const amount = Number(input.value);
-  if (!amount || amount <= 0) return;
+  const amountError = validateRequiredAmount(input.value, type === 'deposit' ? 'Deposit' : 'Withdraw');
+  if (amountError) {
+    showToast(amountError, 'fa-circle-exclamation');
+    input.classList.add('field-invalid');
+    input.focus();
+    return;
+  }
+  input.classList.remove('field-invalid');
+  const amount = parseFormAmount(input.value);
 
   const data = getData();
   const goal = data.goals.find((g) => g.id === id);
@@ -255,4 +315,12 @@ function render() {
 }
 
 resetGoalForm();
+bindFormInputClear([
+  { field: 'goalName', error: 'goalNameError' },
+  { field: 'goalTarget', error: 'goalTargetError' },
+  { field: 'goalSaved', error: 'goalSavedError' },
+  { field: 'goalDeadline', error: 'goalDeadlineError' },
+  { field: 'goalMonthly', error: 'goalMonthlyError' },
+  { field: 'goalNote', error: 'goalNoteError' },
+], 'goalFormError');
 render();

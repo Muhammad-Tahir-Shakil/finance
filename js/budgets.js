@@ -15,15 +15,23 @@ function spentFor(data, cat) {
 
 function setBudget(e) {
   e.preventDefault();
+
+  const limitRaw = document.getElementById('budgetLimit').value;
+  const limitError = validateRequiredAmount(limitRaw, 'Monthly limit');
+
+  setFormFieldError('budgetLimit', 'budgetLimitError', limitError);
+  if (!showFormErrors([limitError], 'budgetFormError')) return;
+
   const cat = document.getElementById('budgetCat').value;
-  const limit = Number(document.getElementById('budgetLimit').value);
-  if (!limit || limit <= 0) return;
+  const limit = parseFormAmount(limitRaw);
 
   const data = getData();
   data.budgets[cat] = limit;
   saveData(data);
   document.getElementById('budgetLimit').value = '';
+  clearFormErrors([{ field: 'budgetLimit', error: 'budgetLimitError' }], 'budgetFormError');
   render();
+  showToast('Budget saved.', 'fa-circle-check');
 }
 
 function deleteBudget(cat) {
@@ -102,4 +110,5 @@ function render() {
 }
 
 fillCategorySelect(document.getElementById('budgetCat'), 'expense');
+bindFormInputClear([{ field: 'budgetLimit', error: 'budgetLimitError' }], 'budgetFormError');
 render();

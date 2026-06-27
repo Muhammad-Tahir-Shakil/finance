@@ -13,60 +13,219 @@ const CAT_META = {
 const answers = {
   income: 0,
   categories: [],
-  catAmounts: {},   // { category: monthlySpend }
+  catAmounts: {},
   goalType: '',
   goalTarget: 0,
   goalSaved: 0,
   moneyStyle: '',
 };
 
-/* --- Inject an error display element dynamically if it doesn't exist --- */
-function showError(message) {
-  let errorEl = document.getElementById('wizardError');
-  if (!errorEl) {
-    errorEl = document.createElement('div');
-    errorEl.id = 'wizardError';
-    errorEl.className = 'form-error'; // Uses your existing .form-error CSS style
-    errorEl.style.color = 'var(--red)';
-    errorEl.style.fontSize = '14px';
-    errorEl.style.marginBottom = '14px';
-    errorEl.style.textAlign = 'center';
-    errorEl.style.fontWeight = '500';
-    
-    // Insert it right above the navigation buttons
-    const nav = document.querySelector('.wizard-nav');
-    nav.parentNode.insertBefore(errorEl, nav);
-  }
-  errorEl.textContent = message;
-  errorEl.style.display = 'block';
+function showWizardError(message) {
+  const errorEl = document.getElementById('wizardError');
+  if (errorEl) errorEl.textContent = message || '';
 }
 
-function clearError() {
-  const errorEl = document.getElementById('wizardError');
-  if (errorEl) {
-    errorEl.style.display = 'none';
-    errorEl.textContent = '';
+function setStepFieldError(errorId, message, inputId, gridId) {
+  const errorEl = document.getElementById(errorId);
+  if (errorEl) errorEl.textContent = message || '';
+
+  if (inputId) {
+    const input = document.getElementById(inputId);
+    if (input) input.classList.toggle('field-invalid', Boolean(message));
+  }
+
+  if (gridId) {
+    const grid = document.getElementById(gridId);
+    if (grid) grid.classList.toggle('field-invalid', Boolean(message));
   }
 }
-/* --- multi-select chips (categories) --- */
+
+function clearStepErrors() {
+  showWizardError('');
+  [
+    ['incomeError', 'income'],
+    ['categoryError', null, 'categoryChips'],
+    ['goalTypeError', null, 'goalChips'],
+    ['goalTargetError', 'goalTarget'],
+    ['goalSavedError', 'goalSaved'],
+    ['styleError', null, 'styleChips'],
+  ].forEach(([errorId, inputId, gridId]) => {
+    setStepFieldError(errorId, '', inputId, gridId);
+  });
+  document.querySelectorAll('#catAmounts .field-error').forEach((el) => {
+    el.textContent = '';
+  });
+  document.querySelectorAll('#catAmounts input').forEach((input) => {
+    input.classList.remove('field-invalid');
+  });
+}
+
+function parseAmount(value) {
+  if (value === '' || value == null) return null;
+  const num = Number(value);
+  if (!Number.isFinite(num)) return null;
+  return num;
+}
+
+function focusFirstStepInvalid() {
+  const stepEl = document.querySelector('.step.active');
+  const first = stepEl?.querySelector('input.field-invalid');
+  if (first) first.focus();
+}
+
+function validateStep(n) {
+  clearStepErrors();
+
+  if (n === 1) {
+    const input = document.getElementById('income');
+    const raw = input.value.trim();
+    if (!raw) {
+      setStepFieldError('incomeError', 'Please enter your monthly income.', 'income');
+      showWizardError('Complete the required field before continuing.');
+      return false;
+    }
+    const income = parseAmount(raw);
+    if (income == null || income <= 0) {
+      setStepFieldError('incomeError', 'Income must be greater than 0.', 'income');
+      showWizardError('Enter a valid monthly income.');
+      return false;
+    }
+    if (income > 100000000) {
+      setStepFieldError('incomeError', 'Please enter a realistic monthly income.', 'income');
+      showWizardError('Enter a valid monthly income.');
+      return false;
+    }
+    return true;
+  }
+
+  if (n === 2) {
+    const selected = document.querySelectorAll('#categoryChips .chip.selected');
+    if (!selected.length) {
+      setStepFieldError('categoryError', 'Select at least one spending category.', null, 'categoryChips');
+      showWizardError('Pick at least one category to continue.');
+      return false;
+    }
+    return true;
+  }
+
+  if (n === 3) {
+    const inputs = document.querySelectorAll('#catAmounts input');
+    if (!inputs.length) {
+      showWizardError('Go back and select at least one category.');
+      return false;
+    }
+
+    let invalid = false;
+    inputs.forEach((input) => {
+      const raw = input.value.trim();
+      const amount = parseAmount(raw);
+      const errorEl = input.parentElement.querySelector('.field-error');
+      if (!raw || amount == null || amount <= 0) {
+        input.classList.add('field-invalid');
+        if (errorEl) errorEl.textContent = 'Enter a monthly amount greater than 0.';
+        invalid = true;
+        return;
+      }
+      if (amount > 100000000) {
+        input.classList.add('field-invalid');
+        if (errorEl) errorEl.textContent = 'Please enter a realistic amount.';
+        invalid = true;
+      }
+    });
+
+    if (invalid) {
+      showWizardError('Enter a valid monthly amount for each selected category.');
+      return false;
+    }
+    return true;
+  }
+
+  if (n === 4) {
+    const sel = document.querySelector('#goalChips .chip.selected');
+    if (!sel) {
+      setStepFieldError('goalTypeError', 'Select your main financial goal.', null, 'goalChips');
+      showWizardError('Choose a goal before continuing.');
+      return false;
+    }
+
+    const targetRaw = document.getElementById('goalTarget').value.trim();
+    const target = parseAmount(targetRaw);
+    if (!targetRaw || target == null || target <= 0) {
+      setStepFieldError('goalTargetError', 'Target amount must be greater than 0.', 'goalTarget');
+      showWizardError('Enter a valid target amount.');
+      return false;
+    }
+
+    const savedRaw = document.getElementById('goalSaved').value.trim();
+    if (savedRaw) {
+      const saved = parseAmount(savedRaw);
+      if (saved == null || saved < 0) {
+        setStepFieldError('goalSavedError', 'Already saved cannot be negative.', 'goalSaved');
+        showWizardError('Fix the optional saved amount before continuing.');
+        return false;
+      }
+      if (saved > target) {
+        setStepFieldError('goalSavedError', 'Already saved cannot exceed your target amount.', 'goalSaved');
+        showWizardError('Fix the optional saved amount before continuing.');
+        return false;
+      }
+    }
+    return true;
+  }
+
+  if (n === 5) {
+    const sel = document.querySelector('#styleChips .chip.selected');
+    if (!sel) {
+      setStepFieldError('styleError', 'Select the option that best describes you.', null, 'styleChips');
+      showWizardError('Choose a money style before finishing.');
+      return false;
+    }
+    return true;
+  }
+
+  return true;
+}
+
 document.querySelectorAll('#categoryChips .chip').forEach((chip) => {
-  chip.addEventListener('click', () => chip.classList.toggle('selected'));
+  chip.addEventListener('click', () => {
+    chip.classList.toggle('selected');
+    setStepFieldError('categoryError', '', null, 'categoryChips');
+    showWizardError('');
+  });
 });
 
-/* --- single-select chips (goal + style) --- */
-function singleSelect(containerId) {
+function singleSelect(containerId, errorId) {
   const chips = document.querySelectorAll(`#${containerId} .chip`);
   chips.forEach((chip) => {
     chip.addEventListener('click', () => {
       chips.forEach((c) => c.classList.remove('selected'));
       chip.classList.add('selected');
+      setStepFieldError(errorId, '', null, containerId);
+      showWizardError('');
     });
   });
 }
-singleSelect('goalChips');
-singleSelect('styleChips');
+singleSelect('goalChips', 'goalTypeError');
+singleSelect('styleChips', 'styleError');
 
-/* --- build the per-category amount inputs (step 3) --- */
+function bindOnboardingInputClear() {
+  ['income', 'goalTarget', 'goalSaved'].forEach((id) => {
+    const input = document.getElementById(id);
+    if (!input) return;
+    input.addEventListener('input', () => {
+      input.classList.remove('field-invalid');
+      const errorMap = {
+        income: 'incomeError',
+        goalTarget: 'goalTargetError',
+        goalSaved: 'goalSavedError',
+      };
+      setStepFieldError(errorMap[id], '', id);
+      showWizardError('');
+    });
+  });
+}
+bindOnboardingInputClear();
+
 function buildCategoryAmounts() {
   const wrap = document.getElementById('catAmounts');
   const empty = document.getElementById('catAmountsEmpty');
@@ -84,12 +243,18 @@ function buildCategoryAmounts() {
     const prev = answers.catAmounts[cat] || '';
     field.innerHTML = `
       <label for="amt_${cat}"><i class="fa-solid ${CAT_META[cat] || 'fa-circle-dollar-to-slot'}" style="color:var(--gold);margin-right:8px;"></i>${cat}</label>
-      <input type="number" min="0" id="amt_${cat}" data-cat="${cat}" placeholder="Monthly amount" value="${prev}"/>`;
+      <input type="number" min="0.01" step="0.01" id="amt_${cat}" data-cat="${cat}" placeholder="Monthly amount" value="${prev}" required/>
+      <p class="field-error"></p>`;
+    const input = field.querySelector('input');
+    input.addEventListener('input', () => {
+      input.classList.remove('field-invalid');
+      field.querySelector('.field-error').textContent = '';
+      showWizardError('');
+    });
     wrap.appendChild(field);
   });
 }
 
-/* --- navigation --- */
 function showStep(n) {
   document.querySelectorAll('.step').forEach((s) => {
     s.classList.toggle('active', Number(s.dataset.step) === n);
@@ -98,6 +263,7 @@ function showStep(n) {
   document.getElementById('progressBar').style.width = (n / TOTAL_STEPS) * 100 + '%';
   document.getElementById('backBtn').disabled = n === 1;
   document.getElementById('nextBtn').textContent = n === TOTAL_STEPS ? 'Finish' : 'Continue';
+  clearStepErrors();
   if (n === 3) buildCategoryAmounts();
 }
 
@@ -125,6 +291,10 @@ function collectStep(n) {
 }
 
 function nextStep() {
+  if (!validateStep(step)) {
+    focusFirstStepInvalid();
+    return;
+  }
   collectStep(step);
   if (step < TOTAL_STEPS) {
     step++;
@@ -142,8 +312,11 @@ function prevStep() {
   }
 }
 
-/* --- finish: persist data + seed transactions, budgets and goal --- */
 function finish() {
+  if (!validateStep(step)) {
+    focusFirstStepInvalid();
+    return;
+  }
   collectStep(step);
   const data = getData();
   const today = new Date().toISOString().slice(0, 10);
@@ -156,21 +329,18 @@ function finish() {
     goalType: answers.goalType,
   };
 
-  // Income as an opening transaction.
   if (answers.income > 0) {
     data.transactions.push({ id: uid(), type: 'income', amount: answers.income, category: 'Salary', date: today, note: 'Monthly income' });
   }
 
-  // One expense transaction + a budget per chosen category.
   answers.categories.forEach((cat) => {
     const amt = answers.catAmounts[cat] || 0;
     if (amt > 0) {
       data.transactions.push({ id: uid(), type: 'expense', amount: amt, category: cat, date: today, note: 'Typical monthly spend' });
-      data.budgets[cat] = Math.round(amt * 1.15); // budget a touch above typical spend
+      data.budgets[cat] = Math.round(amt * 1.15);
     }
   });
 
-  // Savings goal from the answers.
   if (answers.goalType && answers.goalTarget > 0) {
     const cat = inferGoalCategory(answers.goalType);
     data.goals.push(normalizeGoal({
@@ -192,3 +362,8 @@ function finish() {
 }
 
 showStep(1);
+
+document.getElementById('nextBtn').addEventListener('click', nextStep);
+document.getElementById('backBtn').addEventListener('click', prevStep);
+window.nextStep = nextStep;
+window.prevStep = prevStep;

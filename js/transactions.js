@@ -11,12 +11,24 @@ function syncCategoryOptions() {
 
 function addTransaction(e) {
   e.preventDefault();
+
+  const amountRaw = document.getElementById('addAmount').value;
+  const dateInput = document.getElementById('addDate').value;
+  const note = document.getElementById('addNote').value;
+
+  const amountError = validateRequiredAmount(amountRaw, 'Amount');
+  const dateError = dateInput ? validateOptionalDate(dateInput) : 'Date is required.';
+  const noteError = validateOptionalText(note, 'Note', 200);
+
+  setFormFieldError('addAmount', 'addAmountError', amountError);
+  setFormFieldError('addDate', 'addDateError', dateError);
+  setFormFieldError('addNote', 'addNoteError', noteError);
+
+  if (!showFormErrors([amountError, dateError, noteError], 'txFormError')) return;
+
   const type = document.getElementById('addType').value;
   const category = document.getElementById('addCategory').value;
-  const amount = Number(document.getElementById('addAmount').value);
-  const dateInput = document.getElementById('addDate').value;
-  const note = document.getElementById('addNote').value.trim();
-  if (!amount || amount <= 0) return;
+  const amount = parseFormAmount(amountRaw);
 
   const data = getData();
   data.transactions.unshift(normalizeTransaction({
@@ -25,13 +37,19 @@ function addTransaction(e) {
     amount,
     category,
     date: dateInput || localDateStr(),
-    note,
+    note: note.trim(),
   }));
   saveData(data);
   e.target.reset();
   document.getElementById('addDate').value = localDateStr();
+  clearFormErrors([
+    { field: 'addAmount', error: 'addAmountError' },
+    { field: 'addDate', error: 'addDateError' },
+    { field: 'addNote', error: 'addNoteError' },
+  ], 'txFormError');
   syncCategoryOptions();
   render();
+  showToast('Transaction added.', 'fa-circle-check');
 }
 
 function deleteTransaction(id) {
@@ -119,5 +137,10 @@ function render() {
 
 /* default the date picker to today, then render */
 document.getElementById('addDate').value = localDateStr();
+bindFormInputClear([
+  { field: 'addAmount', error: 'addAmountError' },
+  { field: 'addDate', error: 'addDateError' },
+  { field: 'addNote', error: 'addNoteError' },
+], 'txFormError');
 syncCategoryOptions();
 render();

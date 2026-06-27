@@ -8,22 +8,42 @@ let subChart;
 
 function addSubscription(e) {
   e.preventDefault();
-  const name = document.getElementById('subName').value.trim();
-  const amount = Number(document.getElementById('subAmount').value);
+
+  const name = document.getElementById('subName').value;
+  const amountRaw = document.getElementById('subAmount').value;
   const renewDate = document.getElementById('subRenew').value;
+  const note = document.getElementById('subNote').value;
+
+  const nameError = validateRequiredText(name, 'Service name', { min: 2, max: 80 });
+  const amountError = validateRequiredAmount(amountRaw, 'Amount');
+  const dateError = validateOptionalDate(renewDate);
+  const noteError = validateOptionalText(note, 'Note', 200);
+
+  setFormFieldError('subName', 'subNameError', nameError);
+  setFormFieldError('subAmount', 'subAmountError', amountError);
+  setFormFieldError('subRenew', 'subRenewError', dateError);
+  setFormFieldError('subNote', 'subNoteError', noteError);
+
+  if (!showFormErrors([nameError, amountError, dateError, noteError], 'subFormError')) return;
+
   const category = document.getElementById('subCategory').value;
   const cycle = document.getElementById('subCycle').value;
-  const note = document.getElementById('subNote').value.trim();
-  if (!name || !amount || amount <= 0) return;
+  const amount = parseFormAmount(amountRaw);
 
   const data = getData();
   data.subscriptions.push({
-    id: uid(), name, amount, renewDate, category, cycle,
-    active: true, note,
+    id: uid(), name: name.trim(), amount, renewDate, category, cycle,
+    active: true, note: note.trim(),
   });
   saveData(data);
   e.target.reset();
   document.getElementById('subRenew').value = new Date().toISOString().slice(0, 10);
+  clearFormErrors([
+    { field: 'subName', error: 'subNameError' },
+    { field: 'subAmount', error: 'subAmountError' },
+    { field: 'subRenew', error: 'subRenewError' },
+    { field: 'subNote', error: 'subNoteError' },
+  ], 'subFormError');
   render();
   showToast('Subscription added.', 'fa-circle-check');
 }
@@ -137,4 +157,10 @@ function render() {
 }
 
 document.getElementById('subRenew').value = new Date().toISOString().slice(0, 10);
+bindFormInputClear([
+  { field: 'subName', error: 'subNameError' },
+  { field: 'subAmount', error: 'subAmountError' },
+  { field: 'subRenew', error: 'subRenewError' },
+  { field: 'subNote', error: 'subNoteError' },
+], 'subFormError');
 render();

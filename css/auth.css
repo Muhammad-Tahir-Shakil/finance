@@ -83,6 +83,78 @@
   box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.12);
 }
 
+.field input.field-invalid,
+.field select.field-invalid {
+  border-color: rgba(255, 82, 82, 0.65);
+  box-shadow: 0 0 0 3px rgba(255, 82, 82, 0.12);
+}
+
+.field-error {
+  color: var(--red);
+  font-size: 12px;
+  min-height: 16px;
+  margin-top: 6px;
+}
+
+.input-with-toggle {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.input-with-toggle input {
+  width: 100%;
+  padding-right: 46px;
+  position: relative;
+  z-index: 1;
+}
+
+.input-with-toggle input.field-invalid {
+  padding-right: 46px;
+}
+
+.toggle-visibility {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: #8b9cb8;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1;
+  z-index: 3;
+  pointer-events: auto;
+  transition: color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.toggle-visibility i {
+  pointer-events: none;
+}
+
+.toggle-visibility:hover,
+.toggle-visibility:focus-visible {
+  color: var(--gold);
+  outline: none;
+}
+
+.toggle-visibility.is-visible {
+  color: rgba(212, 175, 55, 0.85);
+}
+
+.chip-grid.field-invalid .chip {
+  border-color: rgba(255, 82, 82, 0.35);
+}
+
 .btn-block {
   width: 100%;
   padding: 15px;
@@ -150,6 +222,14 @@
 
 .wizard-nav { display: flex; justify-content: space-between; gap: 14px; margin-top: 32px; }
 .wizard-nav button { flex: 1; }
+.wizard-error {
+  color: var(--red);
+  font-size: 13px;
+  min-height: 18px;
+  margin-top: 18px;
+  text-align: center;
+  font-weight: 500;
+}
 .ghost-btn {
   padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.12);
   background: transparent; color: var(--text); font-weight: 600; cursor: pointer;

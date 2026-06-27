@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
   <link rel="stylesheet" href="../css/styles.css"/>
-  <link rel="stylesheet" href="../css/auth.css"/>
+  <link rel="stylesheet" href="../css/auth.css?v=11"/>
 </head>
 <body>
   <div class="auth-wrap">
@@ -21,18 +21,36 @@
       <h1>Create your account</h1>
       <p class="auth-sub">Start taking control of your finances today.</p>
 
-      <form onsubmit="handleSignup(event)">
+      <form id="signupForm" novalidate>
         <div class="field">
           <label for="name">Full Name</label>
-          <input type="text" id="name" placeholder="Jane Doe" autocomplete="name"/>
+          <input type="text" id="name" placeholder="Jane Doe" autocomplete="name" maxlength="80"/>
+          <p class="field-error" id="nameError"></p>
         </div>
         <div class="field">
           <label for="email">Email</label>
           <input type="email" id="email" placeholder="you@example.com" autocomplete="email"/>
+          <p class="field-error" id="emailError"></p>
         </div>
         <div class="field">
           <label for="password">Password</label>
-          <input type="password" id="password" placeholder="At least 4 characters" autocomplete="new-password"/>
+          <div class="input-with-toggle">
+            <input type="password" id="password" placeholder="Min 6 chars, letters and numbers" autocomplete="new-password"/>
+            <button type="button" class="toggle-visibility" aria-label="Show password" aria-pressed="false" data-target="password">
+              <i class="fa-solid fa-eye-slash" aria-hidden="true"></i>
+            </button>
+          </div>
+          <p class="field-error" id="passwordError"></p>
+        </div>
+        <div class="field">
+          <label for="confirmPassword">Confirm Password</label>
+          <div class="input-with-toggle">
+            <input type="password" id="confirmPassword" placeholder="Re-enter your password" autocomplete="new-password"/>
+            <button type="button" class="toggle-visibility" aria-label="Show password" aria-pressed="false" data-target="confirmPassword">
+              <i class="fa-solid fa-eye-slash" aria-hidden="true"></i>
+            </button>
+          </div>
+          <p class="field-error" id="confirmPasswordError"></p>
         </div>
         <p class="form-error" id="formError"></p>
         <button type="submit" class="btn-block">Create Account</button>
@@ -44,6 +62,6 @@
 
   <script src="../js/storage.js?v=7"></script>
   <script src="../js/loader.js?v=7"></script>
-  <script src="../js/auth.js?v=7"></script>
+  <script src="../js/auth.js?v=11"></script>
 </body>
 </html>
