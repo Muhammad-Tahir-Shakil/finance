@@ -364,6 +364,22 @@ def test_static_assets():
         _, budgets = fetch('/pages/budgets.html')
         assert_('id="budgetCat"' in budgets, 'Budgets has category select')
 
+        app_pages = [
+            '/pages/dashboard.html', '/pages/transactions.html', '/pages/budgets.html',
+            '/pages/goals.html', '/pages/subscriptions.html', '/pages/reports.html',
+            '/pages/networth.html', '/pages/notifications.html',
+        ]
+        nav_versions = set()
+        for path in app_pages:
+            _, html = fetch(path)
+            assert_('id="appSidebar"' in html, f'{path} uses shared appSidebar')
+            assert_('app-nav.js?v=9' in html, f'{path} loads app-nav.js v9')
+            nav_versions.add('9')
+        assert_(len(nav_versions) == 1, 'All app pages use the same app-nav version')
+
+        _, nav_js = fetch('/js/app-nav.js')
+        assert_("label: 'Notifications'" in nav_js, 'app-nav.js includes Notifications link')
+
 
 def test_file_integrity():
     section('File integrity (local)')

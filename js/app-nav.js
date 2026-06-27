@@ -1,5 +1,7 @@
 /* app-nav.js — shared sidebar for all authenticated app pages */
 
+const APP_NAV_VERSION = 9;
+
 const APP_NAV_LINKS = [
   { page: 'dashboard', href: 'dashboard.html', icon: 'fa-gauge-high', label: 'Overview' },
   { page: 'transactions', href: 'transactions.html', icon: 'fa-list', label: 'Transactions' },
@@ -30,8 +32,11 @@ function renderAppNav(activePage) {
 
 function initAppNav() {
   const el = document.getElementById('appSidebar');
-  if (!el || el.dataset.navInit === '1') return;
+  if (!el) return;
+  const version = String(APP_NAV_VERSION);
+  if (el.dataset.navInit === '1' && el.dataset.navVersion === version) return;
   el.dataset.navInit = '1';
+  el.dataset.navVersion = version;
   renderAppNav(el.dataset.page || '');
   if (typeof bindTransitionLinks === 'function') {
     bindTransitionLinks('.side-nav a, .sidebar .logo');

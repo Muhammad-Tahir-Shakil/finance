@@ -19,7 +19,16 @@
 
 .sidebar .logo { margin-bottom: 40px; }
 
-.side-nav { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.side-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+}
 .side-nav a {
   display: flex; align-items: center; gap: 12px;
   padding: 12px 14px; border-radius: 12px;
