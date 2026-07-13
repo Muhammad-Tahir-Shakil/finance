@@ -2,6 +2,10 @@
 
 requireAuth();
 
+if (!hasPlanAtLeast('premium')) {
+  renderPlanGate('premium', 'Net Worth tracking');
+} else {
+
 const GRID = 'rgba(255,255,255,0.06)';
 const TICK = '#9FB3C8';
 let nwChart;
@@ -215,3 +219,5 @@ bindFormInputClear([
   { field: 'liabilityValue', error: 'liabilityValueError' },
 ], 'liabilityFormError');
 render();
+
+} // premium gate

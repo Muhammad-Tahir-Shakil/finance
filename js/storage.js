@@ -38,7 +38,46 @@ function clearSession() {
 function currentUser() {
   const id = getSession();
   if (!id) return null;
-  return getUsers().find((u) => u.id === id) || null;
+  const user = getUsers().find((u) => u.id === id) || null;
+  return user ? normalizeUser(user) : null;
+}
+
+function normalizeUser(user) {
+  if (!user || typeof user !== 'object') return user;
+  const plan = ['free', 'pro', 'premium'].includes(user.plan) ? user.plan : 'free';
+  const demoWallet = Number.isFinite(Number(user.demoWallet)) ? Math.max(0, Number(user.demoWallet)) : 25;
+  const planStartedAt = user.planStartedAt || null;
+  const planExpiresAt = user.planExpiresAt || null;
+  return { ...user, plan, demoWallet, planStartedAt, planExpiresAt };
+}
+
+function updateCurrentUser(patch) {
+  const user = currentUser();
+  if (!user || !patch) return null;
+  const users = getUsers();
+  const idx = users.findIndex((u) => u.id === user.id);
+  if (idx < 0) return null;
+  users[idx] = normalizeUser({ ...users[idx], ...patch });
+  saveUsers(users);
+  return users[idx];
+}
+
+function getUserPlan() {
+  const user = currentUser();
+  return user ? user.plan : 'free';
+}
+
+function getDemoWallet() {
+  const user = currentUser();
+  return user ? Number(user.demoWallet) || 0 : 0;
+}
+
+const PLAN_RANK = { free: 0, pro: 1, premium: 2 };
+
+function hasPlanAtLeast(minPlan) {
+  const need = PLAN_RANK[minPlan] ?? 0;
+  const have = PLAN_RANK[getUserPlan()] ?? 0;
+  return have >= need;
 }
 
 /* ---------- per-user financial data ---------- */
@@ -58,6 +97,7 @@ function emptyData() {
     subscriptions: [],// { id, name, amount, renewDate, category, cycle, active, note }
     netWorth: { assets: [], liabilities: [], history: [] },
     alertReads: {},   // { alertId: fingerprint } — dismissed until condition changes or resolves
+    notices: [],      // persisted inbox notices (e.g. plan upgrades)
   };
 }
 
@@ -220,6 +260,7 @@ function migrateData(data) {
   if (!Array.isArray(data.netWorth.history)) data.netWorth.history = [];
   data.goals = (data.goals || []).map(normalizeGoal).filter(Boolean);
   if (!data.alertReads || typeof data.alertReads !== 'object') data.alertReads = {};
+  if (!Array.isArray(data.notices)) data.notices = [];
 
   data.budgets = normalizeBudgetsMap(data.budgets);
   data.transactions = normalizeTransactions(data.transactions);

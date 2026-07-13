@@ -416,7 +416,40 @@ a { text-decoration: none; color: inherit; }
 .nav-links a.active { color: #ffffff; }
 .nav-links a.active::after { width: 100%; }
 
-.buttons { display: flex; gap: 16px; }
+.buttons { display: flex; gap: 16px; align-items: center; }
+
+.nav-plan-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  background: rgba(212, 175, 55, 0.12);
+  color: #F5D76E;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 0.2px;
+  line-height: 1;
+  transition: 0.2s;
+}
+.nav-plan-chip i { font-size: 11px; }
+.nav-plan-chip:hover {
+  background: rgba(212, 175, 55, 0.2);
+  border-color: rgba(212, 175, 55, 0.55);
+  color: #fff;
+}
+.nav-plan-chip[data-plan="premium"] {
+  border-color: rgba(157, 123, 255, 0.45);
+  background: rgba(157, 123, 255, 0.16);
+  color: #D7C7FF;
+}
+.nav-plan-chip[data-plan="pro"] {
+  border-color: rgba(212, 175, 55, 0.45);
+}
+
 
 /* ===== Shared buttons ===== */
 .btn-outline {

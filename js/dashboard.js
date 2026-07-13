@@ -173,6 +173,25 @@ function renderRecent(data) {
   });
 }
 
+function lockPanel(selector, planName, blurb) {
+  const panel = document.querySelector(selector);
+  if (!panel || panel.querySelector('.panel-lock')) return;
+  panel.classList.add('is-locked');
+  const planKey = /premium/i.test(planName) ? 'premium' : 'pro';
+  panel.setAttribute('data-plan', planKey);
+  const overlay = document.createElement('div');
+  overlay.className = 'panel-lock';
+  overlay.innerHTML = `
+    <div class="panel-lock-card">
+      <i class="fa-solid fa-lock"></i>
+      <strong>${planName} feature</strong>
+      <p>${blurb}</p>
+      <a class="btn-gold" href="pricing.html">Upgrade</a>
+    </div>`;
+  panel.appendChild(overlay);
+  if (typeof applyPlanBadges === 'function') applyPlanBadges();
+}
+
 /* ---------- init ---------- */
 (function init() {
   const user = currentUser();
@@ -186,10 +205,37 @@ function renderRecent(data) {
   }
 
   renderKPIs(data);
-  renderTrend(data);
   renderCategory(data);
-  renderBudget(data);
   renderGoals(data);
   renderRecent(data);
   initNotifications(data);
+
+  if (hasPlanAtLeast('pro')) {
+    renderTrend(data);
+    renderBudget(data);
+  } else {
+    lockPanel('.chart-grid .panel:first-child', 'Pro', 'Income vs expense trends unlock on Pro.');
+    lockPanel('.lower-grid .panel:last-child', 'Pro', 'Budget vs actual analysis unlocks on Pro.');
+    const reportsCard = document.querySelector('.dash-insights .insight-card:nth-child(3)');
+    if (reportsCard) {
+      reportsCard.onclick = () => { location.href = 'pricing.html'; };
+      document.getElementById('kpiReportRate').textContent = 'Pro';
+      reportsCard.querySelector('.kpi-sub').textContent = 'Upgrade to unlock Reports';
+    }
+  }
+
+  if (!hasPlanAtLeast('premium')) {
+    const subsCard = document.querySelector('.dash-insights .insight-card:nth-child(1)');
+    const nwCard = document.querySelector('.dash-insights .insight-card:nth-child(2)');
+    if (subsCard) {
+      subsCard.onclick = () => { location.href = 'pricing.html'; };
+      document.getElementById('kpiSubs').textContent = 'Premium';
+      subsCard.querySelector('.kpi-sub').textContent = 'Upgrade to unlock';
+    }
+    if (nwCard) {
+      nwCard.onclick = () => { location.href = 'pricing.html'; };
+      document.getElementById('kpiNetWorth').textContent = 'Premium';
+      nwCard.querySelector('.kpi-sub').textContent = 'Upgrade to unlock';
+    }
+  }
 })();
