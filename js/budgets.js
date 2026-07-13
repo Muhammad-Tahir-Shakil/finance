@@ -71,7 +71,7 @@ function renderChart(data) {
     ] },
     options: { responsive: true, maintainAspectRatio: false,
       plugins: { legend: { labels: { color: TICK, usePointStyle: true, boxWidth: 8 } } },
-      scales: { x: { grid: { color: GRID }, ticks: { color: TICK } }, y: { grid: { color: GRID }, ticks: { color: TICK, callback: (v) => '$' + v } } } },
+      scales: { x: { grid: { color: GRID }, ticks: { color: TICK } }, y: { grid: { color: GRID }, ticks: { color: TICK, callback: (v) => (typeof chartMoneyTick === 'function' ? chartMoneyTick(v) : ('$' + v)) } } } },
   });
 }
 
@@ -112,3 +112,5 @@ function render() {
 fillCategorySelect(document.getElementById('budgetCat'), 'expense');
 bindFormInputClear([{ field: 'budgetLimit', error: 'budgetLimitError' }], 'budgetFormError');
 render();
+
+if (typeof bindCurrencyRefresh === 'function') bindCurrencyRefresh(render);
